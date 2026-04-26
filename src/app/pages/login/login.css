@@ -1,0 +1,12 @@
+.login-bg {
+	background-image:
+		linear-gradient(rgba(246, 247, 251, 0.88), rgba(246, 247, 251, 0.88)),
+		url('/assets/images/istockphoto-1978222674-1024x1024.jpg');
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+.login-bg .auth-card {
+	backdrop-filter: blur(2px);
+}

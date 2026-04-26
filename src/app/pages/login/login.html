@@ -1,0 +1,47 @@
+<main class="auth-wrapper login-bg">
+    <div class="auth-box text-center">
+    <div class="brand-logo"><i class="bi bi-calculator"></i></div>
+    <h1 class="page-title">Sistema de Cotizaciones</h1>
+    <p class="page-subtitle mb-5">Ingresa a tu cuenta para continuar</p>
+
+    <div class="auth-card auth-card-md mb-4">
+        <h2 class="section-title fs-1 mb-2">Iniciar Sesión</h2>
+        <p class="section-subtitle mb-4">Accede con tu correo electrónico y contraseña</p>
+
+        <form [formGroup]="loginForm">
+            <div class="form-group mb-3">
+                <label class="form-label">Correo Electrónico</label>
+                <input class="form-control" type="email" formControlName="correo" placeholder="usuario@ejemplo.com" autocomplete="off">
+                @if(loginForm.get('correo')?.errors?.["required"] && loginForm.get('correo')?.touched){
+                    <small class="form-text text-danger">El correo es requerido</small>
+                }
+                @if(loginForm.get('correo')?.errors?.["email"] && loginForm.get('correo')?.touched){
+                    <small class="form-text text-danger">Ingresa un correo válido</small>
+                }
+            </div>
+
+            <div class="form-group mb-4">
+                <label class="form-label">Contraseña</label>
+                <input class="form-control" type="password" formControlName="password" placeholder="••••••••" autocomplete="off">
+                @if(loginForm.get('password')?.errors?.["required"] && loginForm.get('password')?.touched){
+                    <small class="form-text text-danger">La contraseña es requerida</small>
+                }
+            </div>
+
+            <button (click)="login()" class="btn btn-dark w-100 d-inline-flex justify-content-center align-items-center gap-3" type="button">
+                <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+            </button>
+
+            <div *ngIf="errorMessage" class="alert alert-danger mt-3" role="alert">
+                {{ errorMessage }}
+            </div>
+        </form>
+
+            <div class="auth-links mt-4">
+                <p>¿No tienes cuenta? <a routerLink="/registro">Regístrate aquí</a></p>
+                <p class="mb-0">¿Olvidaste tu contraseña? <a routerLink="/recuperar-password">Recupérala aquí</a></p>
+            </div>
+        </div>
+    </div>
+</main>
+
