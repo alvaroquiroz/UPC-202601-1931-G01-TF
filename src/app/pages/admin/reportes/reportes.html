@@ -1,0 +1,114 @@
+<!-- NAVBAR -->
+<nav class="topbar navbar navbar-expand-lg">
+  <div class="container-fluid px-4">
+    <div class="d-flex align-items-center gap-3">
+      <div class="brand-logo"><i class="bi bi-calculator"></i></div>
+      <span class="navbar-brand mb-0">Sistema de Cotizaciones</span>
+    </div>
+    <div class="d-flex align-items-center gap-3">
+      <a routerLink="/admin/dashboard" class="btn btn-light-ui btn-sm">
+        <i class="bi bi-arrow-left"></i> Dashboard
+      </a>
+      <a routerLink="/admin/cotizaciones" class="btn btn-light-ui btn-sm">
+        <i class="bi bi-file-earmark-text"></i> Cotizaciones
+      </a>
+      <a routerLink="/admin/usuarios" class="btn btn-light-ui btn-sm">
+        <i class="bi bi-people"></i> Usuarios
+      </a>
+      <a routerLink="/" class="btn btn-light-ui btn-sm">
+        <i class="bi bi-box-arrow-right"></i> Salir
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- CONTENIDO -->
+<div class="page-shell">
+
+  <div class="page-header">
+    <h1 class="page-title">Reportes</h1>
+    <p class="page-subtitle">Análisis y estadísticas del sistema · Abril 2026</p>
+  </div>
+
+  <!-- TARJETAS RESUMEN -->
+  <div class="row g-3 mb-4">
+    @for(item of resumen; track item.label){
+      <div class="col-md-3">
+        <div class="metric-card">
+          <div class="d-flex justify-content-between align-items-start">
+            <span class="metric-title">{{ item.label }}</span>
+            <i class="bi {{ item.icono }} metric-icon"></i>
+          </div>
+          <div class="metric-value">{{ item.valor }}</div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- GRÁFICA BARRAS + DONA -->
+  <div class="row g-4 mb-4">
+    <div class="col-lg-8">
+      <div class="card-ui section-card">
+        <h2 class="section-title mb-3">Cotizaciones por Mes</h2>
+        <canvas baseChart
+          [data]="barChartData"
+          [options]="barChartOptions"
+          [type]="'bar'">
+        </canvas>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card-ui section-card">
+        <h2 class="section-title mb-3">Por Vendedor</h2>
+        <canvas baseChart
+          [data]="donutChartData"
+          [options]="donutChartOptions"
+          [type]="'doughnut'">
+        </canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- GRÁFICA LÍNEA -->
+  <div class="card-ui section-card mb-4">
+    <h2 class="section-title mb-3">Monto Facturado por Mes (S/.)</h2>
+    <canvas baseChart
+      [data]="lineChartData"
+      [options]="lineChartOptions"
+      [type]="'line'">
+    </canvas>
+  </div>
+
+  <!-- TOP CLIENTES -->
+  <div class="card-ui">
+    <div class="section-card border-bottom">
+      <h2 class="section-title">Top Clientes</h2>
+      <p class="section-subtitle">Clientes con mayor volumen de cotizaciones</p>
+    </div>
+    <div class="table-wrap">
+      <table class="table-ui">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Cliente</th>
+            <th>Empresa</th>
+            <th>Cotizaciones</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for(c of topClientes; track c.nombre; let i = $index){
+            <tr>
+              <td class="muted">{{ i + 1 }}</td>
+              <td class="fw-bold">{{ c.nombre }}</td>
+              <td class="muted">{{ c.empresa }}</td>
+              <td>{{ c.cotizaciones }}</td>
+              <td><strong>{{ c.total }}</strong></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,121 @@
+<!-- NAVBAR -->
+<nav class="topbar navbar navbar-expand-lg">
+  <div class="container-fluid px-4">
+    <div class="d-flex align-items-center gap-3">
+      <div class="brand-logo"><i class="bi bi-calculator"></i></div>
+      <span class="navbar-brand mb-0">Sistema de Cotizaciones</span>
+    </div>
+    <div class="d-flex align-items-center gap-3">
+      <a routerLink="/admin/dashboard" class="btn btn-light-ui btn-sm">
+        <i class="bi bi-arrow-left"></i> Dashboard
+      </a>
+      <a routerLink="/admin/cotizaciones" class="btn btn-light-ui btn-sm">
+        <i class="bi bi-file-earmark-text"></i> Cotizaciones
+      </a>
+      <a routerLink="/admin/reportes" class="btn btn-light-ui btn-sm">
+        <i class="bi bi-bar-chart"></i> Reportes
+      </a>
+      <a routerLink="/" class="btn btn-light-ui btn-sm">
+        <i class="bi bi-box-arrow-right"></i> Salir
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- CONTENIDO -->
+<div class="page-shell">
+
+  <div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+      <h1 class="page-title">Usuarios</h1>
+      <p class="page-subtitle">Gestión de usuarios del sistema</p>
+    </div>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="card-ui toolbar-card mb-4">
+    <div class="d-flex gap-2 flex-wrap">
+      <button (click)="filtrar('Todos')"
+        [class]="filtro === 'Todos' ? 'btn btn-dark btn-sm' : 'btn btn-light-ui btn-sm'">
+        Todos
+      </button>
+      <button (click)="filtrar('Admin')"
+        [class]="filtro === 'Admin' ? 'btn btn-dark btn-sm' : 'btn btn-light-ui btn-sm'">
+        Admins
+      </button>
+      <button (click)="filtrar('Vendedor')"
+        [class]="filtro === 'Vendedor' ? 'btn btn-dark btn-sm' : 'btn btn-light-ui btn-sm'">
+        Vendedores
+      </button>
+      <button (click)="filtrar('Cliente')"
+        [class]="filtro === 'Cliente' ? 'btn btn-dark btn-sm' : 'btn btn-light-ui btn-sm'">
+        Clientes
+      </button>
+    </div>
+  </div>
+
+  <!-- TABLA -->
+  <div class="card-ui">
+    <div class="table-wrap">
+      <table class="table-ui">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Fecha Registro</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for(u of usuariosFiltrados; track u.id){
+            <tr>
+              <td class="muted">{{ u.id }}</td>
+              <td class="fw-bold">{{ u.nombre }}</td>
+              <td class="muted">{{ u.correo }}</td>
+              <td>
+                @if(u.rol === 'Admin'){
+                  <span class="badge-ui badge-admin">{{ u.rol }}</span>
+                }
+                @if(u.rol === 'Vendedor'){
+                  <span class="badge-ui badge-seller">{{ u.rol }}</span>
+                }
+                @if(u.rol === 'Cliente'){
+                  <span class="badge-ui badge-client">{{ u.rol }}</span>
+                }
+              </td>
+              <td>
+                @if(u.estado === 'Activo'){
+                  <span class="badge-ui badge-active">{{ u.estado }}</span>
+                }
+                @if(u.estado === 'Bloqueado'){
+                  <span class="badge-ui badge-blocked">{{ u.estado }}</span>
+                }
+              </td>
+              <td class="muted">{{ u.fecha }}</td>
+              <td>
+                <a routerLink="/admin/editar-usuario" class="action-link">
+                  <i class="bi bi-pencil"></i> Editar
+                </a>
+                <button (click)="bloquear(u)" class="action-link btn btn-link p-0 link-btn-plain">
+                  @if(u.estado === 'Activo'){
+                    <i class="bi bi-lock"></i> Bloquear
+                  }
+                  @if(u.estado === 'Bloqueado'){
+                    <i class="bi bi-unlock"></i> Activar
+                  }
+                </button>
+                <button (click)="eliminar(u.id)" class="action-link danger btn btn-link p-0 link-btn-plain link-btn-danger">
+                  <i class="bi bi-trash"></i> Eliminar
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

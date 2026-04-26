@@ -1,0 +1,111 @@
+<!-- NAVBAR -->
+<nav class="topbar navbar navbar-expand-lg">
+  <div class="container-fluid px-4">
+    <div class="d-flex align-items-center gap-3">
+      <div class="brand-logo"><i class="bi bi-calculator"></i></div>
+      <span class="navbar-brand mb-0">Sistema de Cotizaciones</span>
+    </div>
+    <div class="d-flex align-items-center gap-3">
+      <a routerLink="/admin/usuarios" class="btn btn-light-ui btn-sm">
+        <i class="bi bi-arrow-left"></i> Volver
+      </a>
+      <a routerLink="/" class="btn btn-light-ui btn-sm">
+        <i class="bi bi-box-arrow-right"></i> Salir
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- CONTENIDO -->
+<div class="page-shell">
+
+  <div class="page-header">
+    <h1 class="page-title">Editar Usuario</h1>
+    <p class="page-subtitle">Modifica los datos del usuario seleccionado</p>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-lg-7">
+      <div class="card-ui section-card">
+
+        <!-- AVATAR -->
+        <div class="text-center mb-4">
+          <div class="avatar avatar-lg mx-auto mb-2">
+            JP
+          </div>
+          <div class="fw-bold">Juan Pérez</div>
+          <div class="muted muted-md">Cliente · Activo</div>
+        </div>
+
+        <form [formGroup]="editarForm">
+
+          <div class="form-group">
+            <label class="form-label">Nombre Completo *</label>
+            <input class="form-control" type="text" formControlName="nombre"
+              autocomplete="off">
+            @if(editarForm.get('nombre')?.errors?.["required"] && editarForm.get('nombre')?.touched){
+              <small class="form-text text-danger">El nombre es requerido</small>
+            }
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Correo Electrónico *</label>
+            <input class="form-control" type="email" formControlName="correo"
+              autocomplete="off">
+            @if(editarForm.get('correo')?.errors?.["required"] && editarForm.get('correo')?.touched){
+              <small class="form-text text-danger">El correo es requerido</small>
+            }
+            @if(editarForm.get('correo')?.errors?.["email"] && editarForm.get('correo')?.touched){
+              <small class="form-text text-danger">Ingresa un correo válido</small>
+            }
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Teléfono</label>
+            <input class="form-control" type="text" formControlName="telefono"
+              autocomplete="off">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Empresa</label>
+            <input class="form-control" type="text" formControlName="empresa"
+              autocomplete="off">
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="form-label">Rol *</label>
+                <select class="form-control form-select" formControlName="rol">
+                  <option value="Admin">Admin</option>
+                  <option value="Vendedor">Vendedor</option>
+                  <option value="Cliente">Cliente</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="form-label">Estado *</label>
+                <select class="form-control form-select" formControlName="estado">
+                  <option value="Activo">Activo</option>
+                  <option value="Bloqueado">Bloqueado</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex gap-3 mt-4">
+            <button (click)="_submit()" class="btn btn-dark w-100" type="button">
+              <i class="bi bi-floppy"></i> Guardar Cambios
+            </button>
+            <a routerLink="/admin/usuarios" class="btn btn-light-ui w-100">
+              <i class="bi bi-x-lg"></i> Cancelar
+            </a>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>

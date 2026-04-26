@@ -1,0 +1,181 @@
+<!-- NAVBAR -->
+<nav class="topbar navbar navbar-expand-lg">
+  <div class="container-fluid px-4">
+    <div class="d-flex align-items-center gap-3">
+      <div class="brand-logo"><i class="bi bi-calculator"></i></div>
+      <span class="navbar-brand mb-0">Sistema de Cotizaciones</span>
+    </div>
+    <div class="d-flex align-items-center gap-3">
+      <a routerLink="/admin/cotizaciones" class="btn btn-light-ui btn-sm">
+        <i class="bi bi-arrow-left"></i> Volver
+      </a>
+      <a routerLink="/" class="btn btn-light-ui btn-sm">
+        <i class="bi bi-box-arrow-right"></i> Salir
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- CONTENIDO -->
+<div class="page-shell">
+
+  <div class="page-header">
+    <div class="detail-top">
+      <div>
+        <h1 class="page-title">Detalle de Cotización</h1>
+        <p class="page-subtitle">{{ cotizacion.id }} · {{ cotizacion.fecha }}</p>
+      </div>
+      <div class="d-flex align-items-center gap-3">
+        @if(cotizacion.estado === 'Pendiente'){
+          <span class="badge-ui badge-sent">{{ cotizacion.estado }}</span>
+        }
+        @if(cotizacion.estado === 'Aprobada'){
+          <span class="badge-ui badge-accepted">{{ cotizacion.estado }}</span>
+        }
+        @if(cotizacion.estado === 'Observada'){
+          <span class="badge-ui badge-draft">{{ cotizacion.estado }}</span>
+        }
+        @if(cotizacion.estado === 'Rechazada'){
+          <span class="badge-ui badge-rejected">{{ cotizacion.estado }}</span>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+
+    <!-- PRODUCTOS -->
+    <div class="col-lg-8">
+      <div class="card-ui section-card mb-4">
+        <h2 class="section-title mb-3">Productos Solicitados</h2>
+        <div class="table-wrap">
+          <table class="table-ui">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio Unit.</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for(p of cotizacion.productos; track p.nombre){
+                <tr>
+                  <td class="fw-bold">{{ p.nombre }}</td>
+                  <td>{{ p.cantidad }}</td>
+                  <td>S/. {{ p.precio.toFixed(2) }}</td>
+                  <td><strong>S/. {{ (p.precio * p.cantidad).toFixed(2) }}</strong></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- OBSERVACIONES -->
+      @if(cotizacion.observaciones){
+        <div class="card-ui section-card mb-4">
+          <h2 class="section-title mb-2">Observaciones</h2>
+          <p class="muted mb-0">{{ cotizacion.observaciones }}</p>
+        </div>
+      }
+
+      <!-- ACCIONES ADMIN -->
+      <div class="card-ui section-card">
+        <h2 class="section-title mb-3">Acciones</h2>
+        <div class="d-flex gap-3 flex-wrap">
+          @if(cotizacion.estado === 'Pendiente'){
+            <button (click)="aprobar()" class="btn btn-dark">
+              <i class="bi bi-check-circle"></i> Aprobar
+            </button>
+            <button (click)="rechazar()" class="btn btn-danger">
+              <i class="bi bi-x-circle"></i> Rechazar
+            </button>
+          }
+          <button (click)="eliminar()" class="btn btn-light-ui">
+            <i class="bi bi-trash"></i> Eliminar Cotización
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="col-lg-4">
+
+      <!-- INFO CLIENTE -->
+      <div class="card-ui section-card mb-4">
+        <h2 class="section-title mb-3">Datos del Cliente</h2>
+        <div class="info-list">
+          <div class="item">
+            <i class="bi bi-person"></i>
+            <div>
+              <div class="label">Nombre</div>
+              <div class="value">{{ cotizacion.cliente.nombre }}</div>
+            </div>
+          </div>
+          <div class="item">
+            <i class="bi bi-envelope"></i>
+            <div>
+              <div class="label">Correo</div>
+              <div class="value">{{ cotizacion.cliente.correo }}</div>
+            </div>
+          </div>
+          <div class="item">
+            <i class="bi bi-telephone"></i>
+            <div>
+              <div class="label">Teléfono</div>
+              <div class="value">{{ cotizacion.cliente.telefono }}</div>
+            </div>
+          </div>
+          <div class="item">
+            <i class="bi bi-building"></i>
+            <div>
+              <div class="label">Empresa</div>
+              <div class="value">{{ cotizacion.cliente.empresa }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INFO VENDEDOR -->
+      <div class="card-ui section-card mb-4">
+        <h2 class="section-title mb-3">Datos del Vendedor</h2>
+        <div class="info-list">
+          <div class="item">
+            <i class="bi bi-person-badge"></i>
+            <div>
+              <div class="label">Nombre</div>
+              <div class="value">{{ cotizacion.vendedor.nombre }}</div>
+            </div>
+          </div>
+          <div class="item">
+            <i class="bi bi-envelope"></i>
+            <div>
+              <div class="label">Correo</div>
+              <div class="value">{{ cotizacion.vendedor.correo }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOTALES -->
+      <div class="card-ui fin-card">
+        <h2 class="section-title mb-3">Resumen de Pago</h2>
+        <div class="summary-line">
+          <span>Subtotal</span>
+          <span>S/. {{ subtotal.toFixed(2) }}</span>
+        </div>
+        <div class="summary-line">
+          <span>IGV (18%)</span>
+          <span>S/. {{ igv.toFixed(2) }}</span>
+        </div>
+        <div class="summary-total">
+          <span class="fw-bold">Total</span>
+          <strong>S/. {{ total.toFixed(2) }}</strong>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
