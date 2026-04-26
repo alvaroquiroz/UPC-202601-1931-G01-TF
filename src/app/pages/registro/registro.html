@@ -1,1 +1,73 @@
-<p>registro works!</p>
+<main class="auth-wrapper">
+    <div class="auth-box text-center">
+        <div class="brand-logo"><i class="bi bi-calculator"></i></div>
+        <h1 class="page-title">Crear Cuenta</h1>
+        <p class="page-subtitle mb-5">Regístrate para solicitar cotizaciones</p>
+
+    <div class="auth-card auth-card-lg">
+        <h2 class="section-title fs-1 mb-2">Registro de Cliente</h2>
+        <p class="section-subtitle mb-4">Completa tus datos para crear una cuenta</p>
+
+    <form [formGroup]="registroForm">
+        <div class="form-group mb-3">
+            <label class="form-label">Nombre*</label>
+            <input class="form-control" type="text" formControlName="nombre" placeholder="Juan Pérez" autocomplete="off">
+            @if(registroForm.get('nombre')?.errors?.["required"] && registroForm.get('nombre')?.touched){
+                <small class="form-text text-danger">El nombre es requerido</small>
+            }
+        </div>
+
+        <div class="form-group mb-3">
+            <label class="form-label">Apellido*</label>
+            <input class="form-control" type="text" formControlName="apellido" placeholder="Pérez García" autocomplete="off">
+            @if(registroForm.get('apellido')?.errors?.["required"] && registroForm.get('apellido')?.touched){
+                <small class="form-text text-danger">El apellido es requerido</small>
+            }
+        </div>
+
+        <div class="form-group mb-3">
+            <label class="form-label">Correo Electrónico *</label>
+            <input class="form-control" type="email" formControlName="correo" placeholder="juan@empresa.com" autocomplete="off">
+            @if(registroForm.get('correo')?.errors?.["required"] && registroForm.get('correo')?.touched){
+                <small class="form-text text-danger">El correo es requerido</small>
+            }
+        </div>
+
+        <div class="form-group mb-3">
+            <label class="form-label">Teléfono</label>
+            <input class="form-control" type="text" formControlName="telefono" placeholder="+51 999 999 999" autocomplete="off">
+        </div>
+
+        <div class="form-group mb-3">
+            <label class="form-label">Empresa</label>
+            <input class="form-control" type="text" formControlName="empresa" placeholder="Nombre de tu empresa" autocomplete="off">
+        </div>
+
+        <div class="form-group mb-3">
+            <label class="form-label">Contraseña *</label>
+            <input class="form-control" type="password" formControlName="password" placeholder="••••••••" autocomplete="off">
+            @if(registroForm.get('password')?.errors?.["required"] && registroForm.get('password')?.touched){
+                <small class="form-text text-danger">La contraseña es requerida</small>
+            }
+        </div>
+
+        <div class="form-group mb-4">
+            <label class="form-label">Confirmar Contraseña *</label>
+            <input class="form-control" type="password" formControlName="confirmPassword" placeholder="••••••••" autocomplete="off">
+            @if(registroForm.get('confirmPassword')?.errors?.["required"] && registroForm.get('confirmPassword')?.touched){
+                <small class="form-text text-danger">Confirma tu contraseña</small>
+            }
+        </div>
+
+        <div class="form-group text-center">
+            <button (click)="_submit()" class="btn btn-dark w-100" type="button">
+                <i class="bi bi-person-plus"></i> Crear Cuenta
+            </button>
+        </div>
+    </form>
+        <div class="auth-links mt-4">
+            <p class="mb-0">¿Ya tienes cuenta? <a routerLink="/">Inicia sesión aquí</a></p>
+        </div>
+    </div>
+    </div>
+</main>

@@ -1,0 +1,83 @@
+<!-- NAVBAR -->
+<nav class="topbar navbar navbar-expand-lg">
+    <div class="container-fluid px-4">
+        <div class="d-flex align-items-center gap-3">
+            <div class="brand-logo"><i class="bi bi-calculator"></i></div>
+            <span class="navbar-brand mb-0">Sistema de Cotizaciones</span>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            <div class="user-chip">
+                <div class="avatar">JP</div>
+            <div>
+                <div class="name">Juan Pérez</div>
+                <div class="email">cliente&#64;ejemplo.com</div>
+            </div>
+        </div>
+        <a routerLink="/" class="btn btn-light-ui btn-sm">
+            <i class="bi bi-box-arrow-right"></i> Salir
+        </a>
+        </div>
+    </div>
+</nav>
+
+<!-- CONTENIDO -->
+<div class="page-shell">
+    
+    <div class="page-header d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="page-title">Mis Cotizaciones</h1>
+            <p class="page-subtitle">Consulta el estado de todas tus cotizaciones</p>
+        </div>
+        <a routerLink="/cliente/solicitar-cotizacion" class="btn btn-dark">
+            <i class="bi bi-plus-lg"></i> Nueva Cotización
+        </a>
+    </div>
+
+<!-- TABLA -->
+<div class="card-ui">
+    <div class="table-wrap">
+        <table class="table-ui">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Fecha</th>
+                    <th>Productos</th>
+                    <th>Total</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for(cot of cotizaciones; track cot.id){
+                <tr>
+                    <td class="quote-code">{{ cot.id }}</td>
+                    <td class="muted">{{ cot.fecha }}</td>
+                    <td>{{ cot.productos }} productos</td>
+                    <td><strong>{{ cot.total }}</strong></td>
+                <td>
+                    @if(cot.estado === 'Pendiente'){
+                    <span class="badge-ui badge-sent">{{ cot.estado }}</span>
+                    }
+                    @if(cot.estado === 'Aprobada'){
+                    <span class="badge-ui badge-accepted">{{ cot.estado }}</span>
+                    }
+                    @if(cot.estado === 'Observada'){
+                    <span class="badge-ui badge-draft">{{ cot.estado }}</span>
+                    }
+                    @if(cot.estado === 'Rechazada'){
+                    <span class="badge-ui badge-rejected">{{ cot.estado }}</span>
+                    }
+                </td>
+                <td>
+                    <a routerLink="/cliente/detalle-cotizacion" class="action-link">
+                        <i class="bi bi-eye"></i> Ver detalle
+                    </a>
+                </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</div>

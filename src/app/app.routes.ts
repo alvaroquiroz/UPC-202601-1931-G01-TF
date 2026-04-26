@@ -11,6 +11,11 @@ import { Reportes } from './pages/admin/reportes/reportes';
 import { Usuarios } from './pages/admin/usuarios/usuarios';
 import { authGuard } from './core/guards/auth-guard';
 
+import { Dashboard as ClienteDashboard } from './pages/cliente/dashboard/dashboard';
+import { DetalleCotizacion as ClienteDetalle } from './pages/cliente/detalle-cotizacion/detalle-cotizacion';
+import { MisCotizaciones } from './pages/cliente/mis-cotizaciones/mis-cotizaciones';
+import { SolicitarCotizacion } from './pages/cliente/solicitar-cotizacion/solicitar-cotizacion';
+
 export const routes: Routes = [
 
     { path: '', component: Login},
@@ -28,6 +33,18 @@ export const routes: Routes = [
         { path: 'editar-usuario', component: EditarUsuario },
         { path: 'reportes', component: Reportes },
         { path: 'usuarios', component: Usuarios },
+      ]
+    },
+
+    {
+      path: 'cliente',
+      canActivate: [authGuard],
+      children: [
+        { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+        { path: 'dashboard', component: ClienteDashboard },
+        { path: 'detalle-cotizacion', component: ClienteDetalle },
+        { path: 'mis-cotizaciones', component: MisCotizaciones },
+        { path: 'solicitar-cotizacion', component: SolicitarCotizacion },
       ]
     },
 
