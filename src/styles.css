@@ -1,1 +1,86 @@
-/* You can add global styles to this file, and also import other style files */
+/* Critical global styles to keep layout stable across pages. */
+html,
+body {
+	min-height: 100%;
+}
+
+body {
+	margin: 0;
+	font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	color: #111111;
+	background: #f6f7fb;
+}
+
+.page-shell {
+	max-width: 1400px;
+	margin: 0 auto;
+	padding: 1.5rem 1rem 2.5rem;
+}
+
+.page-title {
+	font-size: clamp(1.7rem, 3vw, 2.4rem);
+	font-weight: 800;
+	letter-spacing: -0.03em;
+	margin: 0;
+}
+
+.page-subtitle {
+	color: #6d7085;
+	font-size: clamp(0.95rem, 1.4vw, 1.05rem);
+	margin: 0.25rem 0 0;
+}
+
+.brand-logo {
+	width: 44px;
+	height: 44px;
+	border-radius: 14px;
+	background: #04041f;
+	color: #fff;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.2rem;
+	margin-right: 0.85rem;
+	flex-shrink: 0;
+}
+
+.auth-wrapper {
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 2rem 1rem;
+}
+
+.auth-box {
+	max-width: 720px;
+	width: 100%;
+	text-align: center;
+}
+
+.auth-card {
+	margin: 0 auto;
+	text-align: left;
+	background: #ffffff;
+	border: 1px solid #e5e7ef;
+	border-radius: 24px;
+	box-shadow: 0 6px 18px rgba(18, 24, 40, 0.06);
+	padding: 1.5rem;
+}
+
+.auth-card-md {
+	max-width: 820px;
+	margin: 0 auto;
+}
+
+.auth-card-lg {
+	max-width: 900px;
+	margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+	.page-shell {
+		padding: 2rem 2rem 3rem;
+	}
+}
+
