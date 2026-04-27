@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RouterLinkWithHref } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterLinkWithHref } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -8,6 +8,8 @@ import { RouterLinkWithHref } from '@angular/router';
   styleUrl: './dashboard.css',
 })
 export class Dashboard {
+  private router = inject(Router);
+
   cotizaciones = [
     { id: 'COT-001', cliente: 'Juan Pérez',    fecha: '20 Abr 2026', total: 'S/. 1,200.00', estado: 'Pendiente' },
     { id: 'COT-002', cliente: 'María López',   fecha: '18 Abr 2026', total: 'S/. 3,750.00', estado: 'Aprobada'  },
@@ -31,4 +33,11 @@ export class Dashboard {
   get observadas(){ 
     return this.cotizaciones.filter(c => c.estado === 'Observada').length; 
   }
+
+  logout(event: Event): void {
+    event.preventDefault();
+    localStorage.removeItem('access_token');
+    this.router.navigate(['/']);
+  }
+
 }
