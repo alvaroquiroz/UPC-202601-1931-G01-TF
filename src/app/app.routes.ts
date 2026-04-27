@@ -21,6 +21,7 @@ import { Cotizaciones as VendedorCotizaciones } from './pages/vendedor/cotizacio
 import { DetalleCotizacion as VendedorDetalle } from './pages/vendedor/detalle-cotizacion/detalle-cotizacion';
 import { NuevaCotizacion } from './pages/vendedor/nueva-cotizacion/nueva-cotizacion';
 import { NuevaCotizacionCliente } from './pages/vendedor/nueva-cotizacion-cliente/nueva-cotizacion-cliente';
+import { authGuard } from './core/guards/auth-guard';
 
 export const routes: Routes = [
 
@@ -58,11 +59,11 @@ export const routes: Routes = [
       path: 'vendedor',
       canActivate: [authGuard],
       children: [
-        { path: 'vendedor/dashboard', component: VendedorDashboard },
-        { path: 'vendedor/cotizaciones', component: VendedorCotizaciones },
-        { path: 'vendedor/detalle-cotizacion', component: VendedorDetalle },
-        { path: 'vendedor/nueva-cotizacion', component: NuevaCotizacion },
-        { path: 'vendedor/nueva-cotizacion-cliente', component: NuevaCotizacionCliente },
+        { path: 'dashboard', component: VendedorDashboard },
+        { path: 'cotizaciones', component: VendedorCotizaciones },
+        { path: 'detalle-cotizacion', component: VendedorDetalle },
+        { path: 'nueva-cotizacion', component: NuevaCotizacion },
+        { path: 'nueva-cotizacion-cliente', component: NuevaCotizacionCliente },
       ]
     },
 
