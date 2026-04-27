@@ -16,6 +16,12 @@ import { DetalleCotizacion as ClienteDetalle } from './pages/cliente/detalle-cot
 import { MisCotizaciones } from './pages/cliente/mis-cotizaciones/mis-cotizaciones';
 import { SolicitarCotizacion } from './pages/cliente/solicitar-cotizacion/solicitar-cotizacion';
 
+import { Dashboard as VendedorDashboard } from './pages/vendedor/dashboard/dashboard';
+import { Cotizaciones as VendedorCotizaciones } from './pages/vendedor/cotizaciones/cotizaciones';
+import { DetalleCotizacion as VendedorDetalle } from './pages/vendedor/detalle-cotizacion/detalle-cotizacion';
+import { NuevaCotizacion } from './pages/vendedor/nueva-cotizacion/nueva-cotizacion';
+import { NuevaCotizacionCliente } from './pages/vendedor/nueva-cotizacion-cliente/nueva-cotizacion-cliente';
+
 export const routes: Routes = [
 
     { path: '', component: Login},
@@ -45,6 +51,18 @@ export const routes: Routes = [
         { path: 'detalle-cotizacion', component: ClienteDetalle },
         { path: 'mis-cotizaciones', component: MisCotizaciones },
         { path: 'solicitar-cotizacion', component: SolicitarCotizacion },
+      ]
+    },
+
+    {
+      path: 'vendedor',
+      canActivate: [authGuard],
+      children: [
+        { path: 'vendedor/dashboard', component: VendedorDashboard },
+        { path: 'vendedor/cotizaciones', component: VendedorCotizaciones },
+        { path: 'vendedor/detalle-cotizacion', component: VendedorDetalle },
+        { path: 'vendedor/nueva-cotizacion', component: NuevaCotizacion },
+        { path: 'vendedor/nueva-cotizacion-cliente', component: NuevaCotizacionCliente },
       ]
     },
 

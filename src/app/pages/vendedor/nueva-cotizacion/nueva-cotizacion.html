@@ -1,0 +1,149 @@
+<!-- NAVBAR -->
+<nav class="topbar navbar navbar-expand-lg">
+    <div class="container-fluid px-4">
+        <div class="d-flex align-items-center gap-3">
+            <div class="brand-logo"><i class="bi bi-calculator"></i></div>
+            <span class="navbar-brand mb-0">Sistema de Cotizaciones</span>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            <a routerLink="/vendedor/cotizaciones" class="btn btn-light-ui btn-sm">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+            <a routerLink="/" class="btn btn-light-ui btn-sm">
+                <i class="bi bi-box-arrow-right"></i> Salir
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- CONTENIDO -->
+<div class="page-shell">
+
+    <div class="page-header">
+        <h1 class="page-title">Nueva Cotización</h1>
+        <p class="page-subtitle">Crea una cotización para un cliente</p>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- IZQUIERDA -->
+        <div class="col-lg-8">
+
+            <!-- DATOS CLIENTE -->
+            <div class="card-ui section-card mb-4">
+                <h2 class="section-title mb-3">Datos del Cliente</h2>
+                <form [formGroup]="cotizacionForm">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Nombre del Cliente *</label>
+                                <input class="form-control" type="text" formControlName="cliente" placeholder="Juan Pérez" autocomplete="off">
+                                @if(cotizacionForm.get('cliente')?.errors?.["required"] && cotizacionForm.get('cliente')?.touched){
+                                    <small class="form-text text-danger">El nombre es requerido</small>
+                                }
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Empresa *</label>
+                                <input class="form-control" type="text" formControlName="empresa" placeholder="Nombre de la empresa" autocomplete="off">
+                                @if(cotizacionForm.get('empresa')?.errors?.["required"] && cotizacionForm.get('empresa')?.touched){
+                                    <small class="form-text text-danger">La empresa es requerida</small>
+                                }
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Correo *</label>
+                                <input class="form-control" type="email" formControlName="correo" placeholder="cliente@empresa.com" autocomplete="off">
+                                @if(cotizacionForm.get('correo')?.errors?.["required"] && cotizacionForm.get('correo')?.touched){
+                                    <small class="form-text text-danger">El correo es requerido</small>
+                                }
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Observaciones</label>
+                                <textarea class="form-control" formControlName="observaciones" rows="2" placeholder="Indicaciones adicionales..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- PRODUCTOS -->
+            <div class="card-ui section-card">
+                <h2 class="section-title mb-3">Seleccionar Productos</h2>
+                <div class="row g-3">
+                    @for(producto of productos; track producto.id){
+                        <div class="col-md-6">
+                            <div class="product-card">
+                                <div class="product-title">{{ producto.nombre }}</div>
+                                <div class="product-desc">{{ producto.descripcion }}</div>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <div class="product-price">
+                                        <small>S/.</small> {{ producto.precio.toFixed(2) }}
+                                    </div>
+                                    <button (click)="agregarProducto(producto)" class="btn btn-dark btn-sm">
+                                        <i class="bi bi-plus-lg"></i> Agregar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+        </div>
+
+    <!-- RESUMEN -->
+    <div class="col-lg-4">
+        <div class="card-ui quote-sidebar">
+            <h2 class="section-title mb-3">Resumen</h2>
+
+            @if(carrito.length === 0){
+                <div class="empty-state">
+                    <i class="bi bi-cart3"></i>
+                    <p class="mt-3">No hay productos agregados</p>
+                </div>
+            }
+
+            @for(item of carrito; track item.id){
+                <div class="cart-item">
+                    <div class="d-flex justify-content-between">
+                    <span class="fw-bold">{{ item.nombre }}</span>
+                    <button (click)="quitarProducto(item.id)" class="btn btn-sm btn-light-ui">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                    </div>
+                    <div class="d-flex justify-content-between mt-2">
+                        <span class="muted">Cant: {{ item.cantidad }}</span>
+                        <span class="fw-bold">S/. {{ (item.precio * item.cantidad).toFixed(2) }}</span>
+                    </div>
+                </div>
+            }
+
+            @if(carrito.length > 0){
+                <div class="summary-line mt-3">
+                    <span>Subtotal</span>
+                    <span>S/. {{ subtotal.toFixed(2) }}</span>
+                </div>
+                <div class="summary-line">
+                    <span>IGV (18%)</span>
+                    <span>S/. {{ igv.toFixed(2) }}</span>
+                </div>
+                <div class="summary-total">
+                    <span class="fw-bold">Total</span>
+                    <strong>S/. {{ total.toFixed(2) }}</strong>
+                </div>
+            }
+
+            <button (click)="_submit()" class="btn btn-dark w-100 mt-3" type="button">
+                <i class="bi bi-send"></i> Crear Cotización
+            </button>
+
+        </div>
+    </div>
+
+    </div>
+</div>

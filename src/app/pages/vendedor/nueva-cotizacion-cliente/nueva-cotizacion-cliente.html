@@ -1,0 +1,132 @@
+<!-- NAVBAR -->
+<nav class="topbar navbar navbar-expand-lg">
+    <div class="container-fluid px-4">
+        <div class="d-flex align-items-center gap-3">
+            <div class="brand-logo"><i class="bi bi-calculator"></i></div>
+            <span class="navbar-brand mb-0">Sistema de Cotizaciones</span>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            <a routerLink="/vendedor/cotizaciones" class="btn btn-light-ui btn-sm">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+            <a routerLink="/" class="btn btn-light-ui btn-sm">
+                <i class="bi bi-box-arrow-right"></i> Salir
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- CONTENIDO -->
+<div class="page-shell">
+
+    <div class="page-header">
+        <h1 class="page-title">Seleccionar Cliente</h1>
+        <p class="page-subtitle">Elige el cliente para crear la cotización</p>
+    </div>
+
+    <div class="row g-4">
+
+    <!-- LISTA DE CLIENTES -->
+    <div class="col-lg-7">
+        <div class="card-ui section-card">
+
+        <!-- BUSCADOR -->
+            <div class="form-group mb-3">
+                <input class="form-control" type="text"
+                [(ngModel)]="busqueda"
+                placeholder="🔍 Buscar por nombre o empresa...">
+        </div>
+
+        <!-- TABLA -->
+        <div class="table-wrap">
+            <table class="table-ui">
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Empresa</th>
+                        <th>Cotizaciones</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for(cliente of clientesFiltrados; track cliente.id){
+                        <tr>
+                            <td>
+                                <div class="fw-bold">{{ cliente.nombre }}</div>
+                                <div class="muted muted-sm">{{ cliente.correo }}</div>
+                            </td>
+                            <td>{{ cliente.empresa }}</td>
+                            <td>{{ cliente.cotizaciones }}</td>
+                            <td>
+                                <button (click)="seleccionar(cliente)" class="btn btn-dark btn-sm">
+                                <i class="bi bi-check-lg"></i> Seleccionar
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        </div>
+    </div>
+
+    <!-- CLIENTE SELECCIONADO -->
+    <div class="col-lg-5">
+        <div class="card-ui section-card">
+            <h2 class="section-title mb-3">Cliente Seleccionado</h2>
+
+            @if(!clienteSeleccionado){
+                <div class="empty-state">
+                    <i class="bi bi-person-circle"></i>
+                    <p class="mt-3">Selecciona un cliente de la lista</p>
+                </div>
+            }
+
+            @if(clienteSeleccionado){
+                <div class="info-list">
+                    <div class="item">
+                        <i class="bi bi-person"></i>
+                        <div>
+                            <div class="label">Nombre</div>
+                            <div class="value">{{ clienteSeleccionado.nombre }}</div>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <i class="bi bi-building"></i>
+                        <div>
+                            <div class="label">Empresa</div>
+                            <div class="value">{{ clienteSeleccionado.empresa }}</div>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <i class="bi bi-envelope"></i>
+                        <div>
+                            <div class="label">Correo</div>
+                            <div class="value">{{ clienteSeleccionado.correo }}</div>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <i class="bi bi-telephone"></i>
+                        <div>
+                            <div class="label">Teléfono</div>
+                            <div class="value">{{ clienteSeleccionado.telefono }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                    <a routerLink="/vendedor/nueva-cotizacion" class="btn btn-dark w-100">
+                        <i class="bi bi-plus-lg"></i> Crear Cotización
+                    </a>
+                    <button (click)="limpiar()" class="btn btn-light-ui">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+            }
+
+        </div>
+    </div>
+
+    </div>
+</div>
