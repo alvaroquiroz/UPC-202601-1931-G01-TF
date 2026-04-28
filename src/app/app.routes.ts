@@ -21,7 +21,7 @@ import { Cotizaciones as VendedorCotizaciones } from './pages/vendedor/cotizacio
 import { DetalleCotizacion as VendedorDetalle } from './pages/vendedor/detalle-cotizacion/detalle-cotizacion';
 import { NuevaCotizacion } from './pages/vendedor/nueva-cotizacion/nueva-cotizacion';
 import { NuevaCotizacionCliente } from './pages/vendedor/nueva-cotizacion-cliente/nueva-cotizacion-cliente';
-import { authGuard } from './core/guards/auth-guard';
+
 
 export const routes: Routes = [
 
