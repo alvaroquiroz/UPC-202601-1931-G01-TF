@@ -23,9 +23,11 @@ export class Cotizaciones {
     filtro: string = 'Todos';
 
   get cotizacionesFiltradas(){
-    if(this.filtro === 'Todos') 
+    if(this.filtro === 'Todos') {
       return this.cotizaciones;
-      return this.cotizaciones.filter(c => c.estado === this.filtro);
+    }
+    
+    return this.cotizaciones.filter(c => c.estado === this.filtro);
   }
 
   filtrar(estado: string){

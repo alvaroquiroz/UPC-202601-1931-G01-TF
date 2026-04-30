@@ -52,54 +52,54 @@
             </button>
         </div>
     </div>
-</div>
+
 
     <!-- TABLA -->
-<div class="card-ui">
-    <div class="table-wrap">
-        <table class="table-ui">
-            <thead>
-                <tr>
-                    <th>Código</th>
-                    <th>Cliente</th>
-                    <th>Empresa</th>
-                    <th>Fecha</th>
-                    <th>Total</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                @for(cot of cotizacionesFiltradas; track cot.id){
+    <div class="card-ui">
+        <div class="table-wrap">
+            <table class="table-ui">
+                <thead>
                     <tr>
-                        <td class="quote-code">{{ cot.id }}</td>
-                        <td class="fw-bold">{{ cot.cliente }}</td>
-                        <td class="muted">{{ cot.empresa }}</td>
-                        <td class="muted">{{ cot.fecha }}</td>
-                        <td><strong>{{ cot.total }}</strong></td>
-                        <td>
-                            @if(cot.estado === 'Pendiente'){
-                                <span class="badge-ui badge-sent">{{ cot.estado }}</span>
-                            }
-                            @if(cot.estado === 'Aprobada'){
-                                <span class="badge-ui badge-accepted">{{ cot.estado }}</span>
-                            }
-                            @if(cot.estado === 'Observada'){
-                                <span class="badge-ui badge-draft">{{ cot.estado }}</span>
-                            }
-                            @if(cot.estado === 'Rechazada'){
-                                <span class="badge-ui badge-rejected">{{ cot.estado }}</span>
-                            }
-                        </td>
-                        <td>
-                            <a routerLink="/vendedor/detalle-cotizacion" class="action-link">
-                                <i class="bi bi-eye"></i> Ver
-                            </a>
-                        </td>
+                        <th>Código</th>
+                        <th>Cliente</th>
+                        <th>Empresa</th>
+                        <th>Fecha</th>
+                        <th>Total</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @for(cot of cotizacionesFiltradas; track cot.id){
+                        <tr>
+                            <td class="quote-code">{{ cot.id }}</td>
+                            <td class="fw-bold">{{ cot.cliente }}</td>
+                            <td class="muted">{{ cot.empresa }}</td>
+                            <td class="muted">{{ cot.fecha }}</td>
+                            <td><strong>{{ cot.total }}</strong></td>
+                            <td>
+                                @if(cot.estado === 'Pendiente'){
+                                    <span class="badge-ui badge-sent">{{ cot.estado }}</span>
+                                }
+                                @if(cot.estado === 'Aprobada'){
+                                    <span class="badge-ui badge-accepted">{{ cot.estado }}</span>
+                                }
+                                @if(cot.estado === 'Observada'){
+                                    <span class="badge-ui badge-draft">{{ cot.estado }}</span>
+                                }
+                                @if(cot.estado === 'Rechazada'){
+                                    <span class="badge-ui badge-rejected">{{ cot.estado }}</span>
+                                }
+                            </td>
+                            <td>
+                                <a routerLink="/vendedor/detalle-cotizacion" class="action-link">
+                                    <i class="bi bi-eye"></i> Ver
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
-
