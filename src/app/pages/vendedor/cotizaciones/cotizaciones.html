@@ -12,7 +12,7 @@
             <a routerLink="/vendedor/nueva-cotizacion" class="btn btn-dark btn-sm">
                 <i class="bi bi-plus-lg"></i> Nueva Cotización
             </a>
-            <a routerLink="/" class="btn btn-light-ui btn-sm">
+            <a (click)="logout($event)" class="btn btn-light-ui btn-sm" style="cursor:pointer;">
                 <i class="bi bi-box-arrow-right"></i> Salir
             </a>
         </div>

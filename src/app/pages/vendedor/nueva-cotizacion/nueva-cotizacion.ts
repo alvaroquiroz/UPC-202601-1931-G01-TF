@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLinkWithHref } from '@angular/router';
+import { Router, RouterLinkWithHref } from '@angular/router';
 
 @Component({
   selector: 'app-nueva-cotizacion',
@@ -9,6 +9,8 @@ import { RouterLinkWithHref } from '@angular/router';
   styleUrl: './nueva-cotizacion.css',
 })
 export class NuevaCotizacion {
+
+  private router = inject(Router);
 
   cotizacionForm: FormGroup;
 
@@ -70,4 +72,9 @@ export class NuevaCotizacion {
     alert('Cotización creada correctamente.');
   }
 
+  logout(event: Event): void {
+  event.preventDefault();
+  localStorage.removeItem('access_token');
+  this.router.navigate(['/']);
+  }
 }
