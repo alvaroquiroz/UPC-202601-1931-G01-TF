@@ -43,6 +43,17 @@ export class NuevaCotizacion {
     }
   }
 
+  reducirProducto(id: number){
+    const item = this.carrito.find(p => p.id === id);
+    if(item){
+      if(item.cantidad > 1){
+        item.cantidad--;
+      } else {
+        this.carrito = this.carrito.filter(p => p.id !== id);
+      }
+    }
+  }
+
   quitarProducto(id: number){
     this.carrito = this.carrito.filter(p => p.id !== id);
   }
