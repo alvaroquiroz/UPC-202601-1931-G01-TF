@@ -20,10 +20,19 @@ export class Registro {
     telefono:['',[Validators.required]],
     empresa:[''],
     password:['',[Validators.required]],
-    confirmPassword:['',[Validators.required]]
+    confirmPassword:['',[Validators.required]],
+    terminos:[false,[Validators.requiredTrue]]
   })
 
   _submit(){
+    const password = this.registroForm.get('password')?.value;
+    const confirmPassword = this.registroForm.get('confirmPassword')?.value;
+
+    if(password !== confirmPassword){
+      alert('Las contraseñas no coinciden.');
+      return;
+    }
+    
     if(this.registroForm.valid){
       console.log(this.registroForm.value);
     }else{
