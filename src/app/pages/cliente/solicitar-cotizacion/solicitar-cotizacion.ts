@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
-import { Form, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { RouterLinkWithHref } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Router, RouterLinkWithHref } from '@angular/router';
 
 @Component({
   selector: 'app-solicitar-cotizacion',
@@ -9,7 +9,8 @@ import { RouterLinkWithHref } from '@angular/router';
   styleUrl: './solicitar-cotizacion.css',
 })
 export class SolicitarCotizacion {
-
+  private router = inject(Router);
+  
   cotizacionForm: FormGroup;
 
   productos = [
@@ -42,6 +43,17 @@ export class SolicitarCotizacion {
     this.carrito = this.carrito.filter(p => p.id !== id);
   }
 
+  reducirProducto(id: number){
+    const item = this.carrito.find(p => p.id === id);
+    if(item){
+      if(item.cantidad > 1){
+        item.cantidad--;
+      }else{
+        this.carrito = this.carrito.filter(p => p.id !== id);
+      }
+    }
+  }
+
   get total(){
     return this.carrito.reduce((acc, p) => acc + p.precio * p.cantidad, 0).toFixed(2);
   }
@@ -53,6 +65,12 @@ export class SolicitarCotizacion {
     }
     console.log({ productos: this.carrito, ...this.cotizacionForm.value });
     alert('Cotización enviada correctamente.');
+  }
+
+  logout(event: Event): void{
+    event.preventDefault();
+    localStorage.removeItem('access_token');
+    this.router.navigate(['/']);
   }
 
 }

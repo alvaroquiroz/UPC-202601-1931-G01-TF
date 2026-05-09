@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RouterLinkWithHref } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterLinkWithHref } from '@angular/router';
 
 @Component({
   selector: 'app-mis-cotizaciones',
@@ -8,6 +8,7 @@ import { RouterLinkWithHref } from '@angular/router';
   styleUrl: './mis-cotizaciones.css',
 })
 export class MisCotizaciones {
+  private router = inject(Router);
 
   cotizaciones = [
     {id: 'COT-001', fecha: '20-04-2026', productos: 3, total: 'S/. 1,200.00', estado: 'Pendiente'},
@@ -16,4 +17,10 @@ export class MisCotizaciones {
     {id: 'COT-004', fecha: '10-04-2026', productos: 7, total: 'S/. 6,200.00', estado: 'Aprobada'},
     {id: 'COT-005', fecha: '05-04-2026', productos: 1, total: 'S/. 450.00', estado: 'Rechazada'},
   ];
+
+  logout(event: Event): void{
+    event.preventDefault();
+    localStorage.removeItem('access_token');
+    this.router.navigate(['/']);
+  }
 }
