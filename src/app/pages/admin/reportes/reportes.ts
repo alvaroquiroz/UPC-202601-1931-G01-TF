@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RouterLinkWithHref } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterLinkWithHref } from '@angular/router';
 import { ChartConfiguration, ChartData } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 
@@ -10,6 +10,7 @@ import { BaseChartDirective } from 'ng2-charts';
   styleUrl: './reportes.css',
 })
 export class Reportes {
+  private router = inject(Router);
 
   resumen = [
     { label: 'Total Cotizaciones', valor: 124, icono: 'bi-file-earmark-text' },
@@ -99,4 +100,10 @@ export class Reportes {
     { nombre: 'Rosa Quispe',  empresa: 'Digital SAC',    cotizaciones: 7,  total: 'S/. 12,400' },
     { nombre: 'María López',  empresa: 'Soluciones SRL', cotizaciones: 5,  total: 'S/. 9,800'  },
   ];
+
+  logout(event: Event): void {
+    event.preventDefault();
+    localStorage.removeItem('access_token');
+    this.router.navigate(['/']);
+  }
 }

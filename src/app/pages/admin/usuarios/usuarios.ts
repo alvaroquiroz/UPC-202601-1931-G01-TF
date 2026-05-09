@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RouterLinkWithHref } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterLinkWithHref } from '@angular/router';
 
 @Component({
   selector: 'app-usuarios',
@@ -8,6 +8,7 @@ import { RouterLinkWithHref } from '@angular/router';
   styleUrl: './usuarios.css',
 })
 export class Usuarios {
+  private router = inject(Router);
 
   usuarios = [
     { id: 1, nombre: 'Juan Pérez',    correo: 'juan@tech.com',     rol: 'Cliente',  estado: 'Activo',   fecha: '01 Ene 2026' },
@@ -37,5 +38,11 @@ export class Usuarios {
 
   eliminar(id: number){
     alert(`Usuario ${id} eliminado.`);
+  }
+
+  logout(event: Event): void {
+    event.preventDefault();
+    localStorage.removeItem('access_token');
+    this.router.navigate(['/']);
   }
 }

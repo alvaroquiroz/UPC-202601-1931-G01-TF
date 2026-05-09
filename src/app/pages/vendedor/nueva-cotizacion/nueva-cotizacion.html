@@ -9,7 +9,7 @@
             <a routerLink="/vendedor/cotizaciones" class="btn btn-light-ui btn-sm">
                 <i class="bi bi-arrow-left"></i> Volver
             </a>
-            <a routerLink="/" class="btn btn-light-ui btn-sm">
+            <a (click)="logout($event)" class="btn btn-light-ui btn-sm" style="cursor:pointer;">
                 <i class="bi bi-box-arrow-right"></i> Salir
             </a>
         </div>
@@ -111,13 +111,21 @@
             @for(item of carrito; track item.id){
                 <div class="cart-item">
                     <div class="d-flex justify-content-between">
-                    <span class="fw-bold">{{ item.nombre }}</span>
-                    <button (click)="quitarProducto(item.id)" class="btn btn-sm btn-light-ui">
-                        <i class="bi bi-trash"></i>
-                    </button>
+                        <span class="fw-bold">{{ item.nombre }}</span>
+                        <button (click)="quitarProducto(item.id)" class="btn btn-sm btn-light-ui">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </div>
-                    <div class="d-flex justify-content-between mt-2">
-                        <span class="muted">Cant: {{ item.cantidad }}</span>
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <div class="d-flex align-items-center gap-2">
+                            <button (click)="reducirProducto(item.id)" class="btn btn-sm btn-light-ui">
+                                <i class="bi bi-dash"></i>
+                            </button>
+                            <span class="fw-bold">{{ item.cantidad }}</span>
+                            <button (click)="agregarProducto(item)" class="btn btn-sm btn-light-ui">
+                                <i class="bi bi-plus"></i>
+                            </button>
+                        </div>
                         <span class="fw-bold">S/. {{ (item.precio * item.cantidad).toFixed(2) }}</span>
                     </div>
                 </div>

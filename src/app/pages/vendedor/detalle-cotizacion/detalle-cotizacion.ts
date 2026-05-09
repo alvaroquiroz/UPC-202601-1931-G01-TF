@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RouterLinkWithHref } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterLinkWithHref } from '@angular/router';
 
 @Component({
   selector: 'app-detalle-cotizacion',
@@ -8,6 +8,8 @@ import { RouterLinkWithHref } from '@angular/router';
   styleUrl: './detalle-cotizacion.css',
 })
 export class DetalleCotizacion {
+
+  private router = inject(Router);
 
   cotizacion = {
     id: 'COT-001',
@@ -53,5 +55,11 @@ export class DetalleCotizacion {
   rechazar(){
     this.cotizacion.estado = 'Rechazada';
     alert('Cotización rechazada.');
+  }
+
+  logout(event: Event): void {
+  event.preventDefault();
+  localStorage.removeItem('access_token');
+  this.router.navigate(['/']);
   }
 }

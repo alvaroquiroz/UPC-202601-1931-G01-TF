@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RouterLinkWithHref } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterLinkWithHref } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -8,9 +8,10 @@ import { RouterLinkWithHref } from '@angular/router';
   styleUrl: './dashboard.css',
 })
 export class Dashboard {
+  private router = inject(Router);
 
   cotizaciones = [
-    {id: 'COT-001', fecha: '20-04-2026',total: 'S/. 1,200.00', estado: 'Pendientes'},
+    {id: 'COT-001', fecha: '20-04-2026',total: 'S/. 1,200.00', estado: 'Pendiente'},
     {id: 'COT-002', fecha: '18-04-2026', total: 'S/. 3,750.00', estado: 'Aprobada'},
     {id: 'COT-003', fecha: '15-04-2026', total: 'S/. 890.00', estado: 'Observada'},
     {id: 'COT-004', fecha: '10-04-2026', total: 'S/. 6,200.00', estado: 'Aprobada'},
@@ -35,5 +36,11 @@ export class Dashboard {
   
   get rechazadas(){ 
     return this.cotizaciones.filter(c => c.estado === 'Rechazada').length; 
+  }
+
+  logout(event: Event): void{
+    event.preventDefault();
+    localStorage.removeItem('access_token');
+    this.router.navigate(['/']);
   }
 }

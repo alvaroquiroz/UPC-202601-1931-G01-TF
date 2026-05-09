@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLinkWithHref } from '@angular/router';
+import { Router, RouterLinkWithHref } from '@angular/router';
 
 @Component({
   selector: 'app-nueva-cotizacion-cliente',
@@ -9,6 +9,7 @@ import { RouterLinkWithHref } from '@angular/router';
   styleUrl: './nueva-cotizacion-cliente.css',
 })
 export class NuevaCotizacionCliente {
+  private router = inject(Router);
 
   clientes = [
     { id: 1, nombre: 'Juan Pérez',   empresa: 'Tech SAC',       correo: 'juan@tech.com',   telefono: '+51 999 111 222', cotizaciones: 5  },
@@ -38,5 +39,10 @@ export class NuevaCotizacionCliente {
     this.clienteSeleccionado = null;
   }
 
+  logout(event: Event): void {
+  event.preventDefault();
+  localStorage.removeItem('access_token');
+  this.router.navigate(['/']);
+  }
 
 }
