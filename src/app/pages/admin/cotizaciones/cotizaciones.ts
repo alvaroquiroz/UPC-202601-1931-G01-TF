@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RouterLinkWithHref } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterLinkWithHref } from '@angular/router';
 
 @Component({
   selector: 'app-cotizaciones',
@@ -8,6 +8,7 @@ import { RouterLinkWithHref } from '@angular/router';
   styleUrl: './cotizaciones.css',
 })
 export class Cotizaciones {
+  private router = inject(Router);
 
   cotizaciones = [
     { id: 'COT-001', cliente: 'Juan Pérez',   empresa: 'Tech SAC',       vendedor: 'Carlos V.', fecha: '20 Abr 2026', total: 'S/. 1,200.00', estado: 'Pendiente' },
@@ -26,7 +27,17 @@ export class Cotizaciones {
     return this.cotizaciones.filter(c => c.estado === this.filtro);
   }
 
+  eliminar(id: string){
+    this.cotizaciones = this.cotizaciones.filter(c => c.id !== id);
+  }
+
   filtrar(estado: string){
     this.filtro = estado;
+  }
+
+  logout(event: Event){
+    event.preventDefault();
+    localStorage.removeItem('access_token');
+    this.router.navigate(['/']);
   }
 }

@@ -15,7 +15,7 @@
       <a routerLink="/admin/reportes" class="btn btn-light-ui btn-sm">
         <i class="bi bi-bar-chart"></i> Reportes
       </a>
-      <a routerLink="/" class="btn btn-light-ui btn-sm">
+      <a (click)="logout($event)" class="btn btn-light-ui btn-sm" style="cursor:pointer;">
         <i class="bi bi-box-arrow-right"></i> Salir
       </a>
     </div>
@@ -99,9 +99,9 @@
                 <a routerLink="/admin/detalle-cotizacion" class="action-link">
                   <i class="bi bi-eye"></i> Ver
                 </a>
-                <a routerLink="/admin/detalle-cotizacion" class="action-link danger">
+                <button (click)="eliminar(cot.id)" class="action-link danger btn btn-link p-0">
                   <i class="bi bi-trash"></i> Eliminar
-                </a>
+                </button>
               </td>
             </tr>
           }

@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLinkWithHref } from '@angular/router';
+import { Router, RouterLinkWithHref } from '@angular/router';
 
 @Component({
   selector: 'app-editar-usuario',
@@ -9,6 +9,7 @@ import { RouterLinkWithHref } from '@angular/router';
   styleUrl: './editar-usuario.css',
 })
 export class EditarUsuario {
+  private router = inject(Router);
 
   editarForm: FormGroup;
 
@@ -30,5 +31,11 @@ export class EditarUsuario {
     } else {
       alert('Por favor, complete todos los campos correctamente.');
     }
+  }
+
+  logout(event: Event): void {
+    event.preventDefault();
+    localStorage.removeItem('access_token');
+    this.router.navigate(['/']);
   }
 }

@@ -9,7 +9,7 @@
       <a routerLink="/cliente/mis-cotizaciones" class="btn btn-light-ui btn-sm">
         <i class="bi bi-arrow-left"></i> Volver
       </a>
-      <a routerLink="/" class="btn btn-light-ui btn-sm">
+      <a (click)="logout($event)" class="btn btn-light-ui btn-sm" style="cursor:pointer;">
         <i class="bi bi-box-arrow-right"></i> Salir
       </a>
     </div>
@@ -81,7 +81,6 @@
 
     <div class="col-lg-4">
 
-   
       <div class="card-ui section-card mb-4">
         <h2 class="section-title mb-3">Mis Datos</h2>
         <div class="info-list">
