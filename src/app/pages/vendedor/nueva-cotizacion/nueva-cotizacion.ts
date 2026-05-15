@@ -1,6 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLinkWithHref } from '@angular/router';
+import { ProductosService } from '../../../core/services/productos';
+import { Producto } from '../../../interfaces/producto';
 
 @Component({
   selector: 'app-nueva-cotizacion',
@@ -11,63 +13,62 @@ import { Router, RouterLinkWithHref } from '@angular/router';
 export class NuevaCotizacion {
 
   private router = inject(Router);
+  private fb = inject(FormBuilder);
+  private productosService = inject(ProductosService);
 
-  cotizacionForm: FormGroup;
+  cotizacionForm: FormGroup = this.fb.group({
+    cliente:       ['', [Validators.required]],
+    empresa:       ['', [Validators.required]],
+    correo:        ['', [Validators.required, Validators.email]],
+    observaciones: ['']
+  });
 
-  productos = [
-    { id: 1, nombre: 'Laptop Dell XPS 15',  precio: 4500.00, descripcion: 'Laptop profesional 15"' },
-    { id: 2, nombre: 'Monitor LG 27"',       precio: 1200.00, descripcion: 'Monitor 4K IPS' },
-    { id: 3, nombre: 'Teclado Mecánico',     precio: 350.00,  descripcion: 'Teclado mecánico RGB' },
-    { id: 4, nombre: 'Mouse Inalámbrico',    precio: 180.00,  descripcion: 'Mouse ergonómico' },
-    { id: 5, nombre: 'Auriculares Sony',     precio: 650.00,  descripcion: 'Auriculares noise cancelling' },
-    { id: 6, nombre: 'Webcam Logitech',      precio: 420.00,  descripcion: 'Webcam 4K' },
-  ];
+  productos = signal<Producto[]>([]);
+  carrito = signal<{ id: number, name: string, unit_price: number, cantidad: number }[]>([]);
 
-  carrito: { id: number, nombre: string, precio: number, cantidad: number }[] = [];
+  subtotal = computed(() =>
+    this.carrito().reduce((acc, p) => acc + p.unit_price * p.cantidad, 0)
+  );
+  igv   = computed(() => this.subtotal() * 0.18);
+  total = computed(() => this.subtotal() + this.igv());
 
-  constructor(private fb: FormBuilder){
-    this.cotizacionForm = this.fb.group({
-      cliente:       ['', [Validators.required]],
-      empresa:       ['', [Validators.required]],
-      correo:        ['', [Validators.required, Validators.email]],
-      observaciones: ['']
-    });
+  async ngOnInit(){
+    const data = await this.productosService.getProductos();
+    this.productos.set(data);
   }
 
   agregarProducto(producto: any){
-    const existe = this.carrito.find(p => p.id === producto.id);
+    const lista  = this.carrito();
+    const existe = lista.find(p => p.id === producto.id);
     if(existe){
-      existe.cantidad++;
+      this.carrito.set(lista.map(p =>
+        p.id === producto.id ? { ...p, cantidad: p.cantidad + 1 } : p
+      ));
     } else {
-      this.carrito.push({ ...producto, cantidad: 1 });
+      this.carrito.set([...lista, {
+        id:         producto.id,
+        name:       producto.name,
+        unit_price: producto.unit_price,
+        cantidad:   1
+      }]);
     }
   }
 
   reducirProducto(id: number){
-    const item = this.carrito.find(p => p.id === id);
-    if(item){
-      if(item.cantidad > 1){
-        item.cantidad--;
-      } else {
-        this.carrito = this.carrito.filter(p => p.id !== id);
-      }
+    const lista = this.carrito();
+    const item  = lista.find(p => p.id === id);
+    if(!item) return;
+    if(item.cantidad > 1){
+      this.carrito.set(lista.map(p =>
+        p.id === id ? { ...p, cantidad: p.cantidad - 1 } : p
+      ));
+    } else {
+      this.carrito.set(lista.filter(p => p.id !== id));
     }
   }
 
   quitarProducto(id: number){
-    this.carrito = this.carrito.filter(p => p.id !== id);
-  }
-
-  get subtotal(){
-    return this.carrito.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
-  }
-
-  get igv(){ 
-    return this.subtotal * 0.18; 
-  }
-  
-  get total(){ 
-    return this.subtotal + this.igv; 
+    this.carrito.set(this.carrito().filter(p => p.id !== id));
   }
 
   _submit(){

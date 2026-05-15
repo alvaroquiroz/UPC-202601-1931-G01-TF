@@ -75,14 +75,14 @@
             <div class="card-ui section-card">
                 <h2 class="section-title mb-3">Seleccionar Productos</h2>
                 <div class="row g-3">
-                    @for(producto of productos; track producto.id){
+                    @for(producto of productos(); track producto.id){
                         <div class="col-md-6">
                             <div class="product-card">
-                                <div class="product-title">{{ producto.nombre }}</div>
-                                <div class="product-desc">{{ producto.descripcion }}</div>
+                                <div class="product-title">{{ producto.name }}</div>
+                                <div class="product-desc">{{ producto.description }}</div>
                                 <div class="d-flex justify-content-between align-items-center mt-3">
                                     <div class="product-price">
-                                        <small>S/.</small> {{ producto.precio.toFixed(2) }}
+                                        <small>S/.</small> {{ producto.unit_price.toFixed(2) }}
                                     </div>
                                     <button (click)="agregarProducto(producto)" class="btn btn-dark btn-sm">
                                         <i class="bi bi-plus-lg"></i> Agregar
@@ -101,48 +101,46 @@
         <div class="card-ui quote-sidebar">
             <h2 class="section-title mb-3">Resumen</h2>
 
-            @if(carrito.length === 0){
+            @if(carrito().length === 0){
                 <div class="empty-state">
                     <i class="bi bi-cart3"></i>
                     <p class="mt-3">No hay productos agregados</p>
                 </div>
-            }
-
-            @for(item of carrito; track item.id){
-                <div class="cart-item">
-                    <div class="d-flex justify-content-between">
-                        <span class="fw-bold">{{ item.nombre }}</span>
-                        <button (click)="quitarProducto(item.id)" class="btn btn-sm btn-light-ui">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center mt-2">
-                        <div class="d-flex align-items-center gap-2">
-                            <button (click)="reducirProducto(item.id)" class="btn btn-sm btn-light-ui">
-                                <i class="bi bi-dash"></i>
-                            </button>
-                            <span class="fw-bold">{{ item.cantidad }}</span>
-                            <button (click)="agregarProducto(item)" class="btn btn-sm btn-light-ui">
-                                <i class="bi bi-plus"></i>
+            }@else {
+                @for(item of carrito(); track item.id){
+                    <div class="cart-item">
+                        <div class="d-flex justify-content-between">
+                            <span class="fw-bold">{{ item.name }}</span>
+                            <button (click)="quitarProducto(item.id)" class="btn btn-sm btn-light-ui">
+                                <i class="bi bi-trash"></i>
                             </button>
                         </div>
-                        <span class="fw-bold">S/. {{ (item.precio * item.cantidad).toFixed(2) }}</span>
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <div class="d-flex align-items-center gap-2">
+                                <button (click)="reducirProducto(item.id)" class="btn btn-sm btn-light-ui">
+                                    <i class="bi bi-dash"></i>
+                                </button>
+                                <span class="fw-bold">{{ item.cantidad }}</span>
+                                <button (click)="agregarProducto(item)" class="btn btn-sm btn-light-ui">
+                                    <i class="bi bi-plus"></i>
+                                </button>
+                            </div>
+                            <span class="fw-bold">S/. {{ (item.unit_price * item.cantidad).toFixed(2) }}</span>
+                        </div>
                     </div>
-                </div>
-            }
+                }
 
-            @if(carrito.length > 0){
                 <div class="summary-line mt-3">
                     <span>Subtotal</span>
-                    <span>S/. {{ subtotal.toFixed(2) }}</span>
+                    <span>S/. {{ subtotal().toFixed(2) }}</span>
                 </div>
                 <div class="summary-line">
                     <span>IGV (18%)</span>
-                    <span>S/. {{ igv.toFixed(2) }}</span>
+                    <span>S/. {{ igv().toFixed(2) }}</span>
                 </div>
                 <div class="summary-total">
                     <span class="fw-bold">Total</span>
-                    <strong>S/. {{ total.toFixed(2) }}</strong>
+                    <strong>S/. {{ total().toFixed(2) }}</strong>
                 </div>
             }
 

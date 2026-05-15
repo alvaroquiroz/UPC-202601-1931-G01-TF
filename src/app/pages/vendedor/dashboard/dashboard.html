@@ -35,7 +35,7 @@
 
     <!-- TARJETAS -->
     <div class="row g-3 mb-4">
-        <div class="col-md-3">
+        <div class="col">
             <div class="metric-card">
                 <div class="d-flex justify-content-between align-items-start">
                     <span class="metric-title">Total Cotizaciones</span>
@@ -45,7 +45,7 @@
                 <div class="metric-meta">Todas las solicitudes</div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col">
             <div class="metric-card">
                 <div class="d-flex justify-content-between align-items-start">
                     <span class="metric-title">Pendientes</span>
@@ -55,26 +55,36 @@
                 <div class="metric-meta">Por revisar</div>
             </div>
         </div>
-    <div class="col-md-3">
-        <div class="metric-card">
-            <div class="d-flex justify-content-between align-items-start">
-                <span class="metric-title">Aprobadas</span>
-                <i class="bi bi-check-circle metric-icon"></i>
+        <div class="col">
+            <div class="metric-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <span class="metric-title">Aprobadas</span>
+                    <i class="bi bi-check-circle metric-icon"></i>
+                </div>
+                <div class="metric-value success">{{ aprobadas }}</div>
+                <div class="metric-meta">Confirmadas</div>
             </div>
-            <div class="metric-value success">{{ aprobadas }}</div>
-            <div class="metric-meta">Confirmadas</div>
         </div>
-    </div>
-    <div class="col-md-3">
-        <div class="metric-card">
-            <div class="d-flex justify-content-between align-items-start">
-                <span class="metric-title">Observadas</span>
-                <i class="bi bi-exclamation-circle metric-icon"></i>
+        <div class="col">
+            <div class="metric-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <span class="metric-title">Observadas</span>
+                    <i class="bi bi-exclamation-circle metric-icon"></i>
+                </div>
+                <div class="metric-value">{{ observadas }}</div>
+                <div class="metric-meta">Requieren cambios</div>
             </div>
-            <div class="metric-value">{{ observadas }}</div>
-            <div class="metric-meta">Requieren cambios</div>
         </div>
-    </div>
+        <div class="col">
+            <div class="metric-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <span class="metric-title">Rechazadas</span>
+                    <i class="bi bi-x-circle metric-icon"></i>
+                </div>
+                <div class="metric-value">{{ rechazadas }}</div>
+                <div class="metric-meta">No aprobadas</div>
+            </div>
+        </div>
     </div>
 
     <!-- TABLA -->
@@ -100,12 +110,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @for(cot of cotizaciones; track cot.id){
+                    @for(cot of cotizaciones(); track cot.id){
                         <tr>
-                            <td class="quote-code">{{ cot.id }}</td>
+                            <td class="quote-code">{{ cot.code }}</td>
                             <td class="fw-bold">{{ cot.cliente }}</td>
-                            <td class="muted">{{ cot.fecha }}</td>
-                            <td><strong>{{ cot.total }}</strong></td>
+                            <td class="muted">{{ cot.quotation_date }}</td>
+                            <td><strong>{{ cot.total.toFixed(2) }}</strong></td>
                             <td>
                                 @if(cot.estado === 'Pendiente'){
                                 <span class="badge-ui badge-sent">{{ cot.estado }}</span>
