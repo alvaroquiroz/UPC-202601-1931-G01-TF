@@ -10,7 +10,30 @@ services:
     ports:
       - "1433:1433"
     volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - sqlserver_data:/var/opt/mssql
+      - ./init.sql:/init.sql
+    healthcheck:
+      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "SuperPassword123!", "-C", "-Q", "SELECT 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  db-init:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sql_server_init
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - ACCEPT_EULA=Y
+    volumes:
+      - ./init.sql:/init.sql
+    command: >
+      /bin/bash -c "
+      /opt/mssql-tools18/bin/sqlcmd -S db -U sa -P SuperPassword123! -C -i /init.sql &&
+      echo 'Base de datos inicializada correctamente'
+      "
+    restart: "no"
 
   api:
     build: ./api
@@ -18,7 +41,8 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       - DB_SERVER=db
       - DB_USER=sa
@@ -26,3 +50,6 @@ services:
       - DB_NAME=db_cotizaciones
     volumes:
       - ./api:/app
+  
+volumes:
+  sqlserver_data:

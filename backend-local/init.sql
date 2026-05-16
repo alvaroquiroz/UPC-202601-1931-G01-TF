@@ -117,3 +117,19 @@ INSERT INTO products (code, name, description, unit_price, stock, status) VALUES
 ('PROD-002', 'Monitor LG 27"', 'Monitor 4K', 1200.00, 15, 'activo'),
 ('PROD-003', 'Teclado Mecanico', 'Teclado RGB', 350.00, 20, 'activo');
 GO
+
+INSERT INTO quotations (code, client_user_id, vendor_user_id, status_id, quotation_date, subtotal, igv, total, general_comment) VALUES
+('COT-001', 3, 2, 2, CAST(GETDATE() AS DATE), 1200.00, 216.00, 1416.00, 'Entrega urgente'),
+('COT-002', 3, 2, 3, CAST(GETDATE() AS DATE), 3750.00, 675.00, 4425.00, NULL),
+('COT-003', 3, 2, 4, CAST(GETDATE() AS DATE), 890.00, 160.20, 1050.20, 'Verificar stock');
+
+INSERT INTO quotation_items (quotation_id, product_id, quantity, unit_price, line_subtotal, line_igv, line_total) VALUES
+(1, 1, 1, 4500.00, 4500.00, 810.00, 5310.00),
+(2, 2, 2, 1200.00, 2400.00, 432.00, 2832.00),
+(3, 3, 1, 350.00, 350.00, 63.00, 413.00);
+GO
+
+INSERT INTO quotations (code, client_user_id, vendor_user_id, status_id, quotation_date, subtotal, igv, total, general_comment) VALUES
+('COT-004', 3, 2, 2, CAST(GETDATE() AS DATE), 500.00, 90.00, 590.00, 'Para prueba de observar'),
+('COT-005', 3, 2, 2, CAST(GETDATE() AS DATE), 800.00, 144.00, 944.00, 'Para prueba de rechazar');
+GO
