@@ -46,3 +46,5 @@ Thumbs.db
 # Alvaro
 codigo_angular.txt
 *.drawio.bkp
+**/__pycache__/
+*.pyc
