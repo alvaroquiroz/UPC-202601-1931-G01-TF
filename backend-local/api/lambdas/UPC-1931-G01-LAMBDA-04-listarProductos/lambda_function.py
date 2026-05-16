@@ -15,16 +15,18 @@ def lambda_handler(event, context):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("SELECT id, code, name, description, unit_price FROM products WHERE status = 'activo'")
+        cursor.execute("SELECT id, code, name, description, unit_price, stock, status FROM products WHERE status = 'activo'")
         
         productos = []
         for row in cursor.fetchall():
             productos.append({
                 "id": row.id,
                 "code": row.code,
-                "nombre": row.name,
-                "descripcion": row.description,
-                "precio": float(row.unit_price)
+                "name": row.name,
+                "description": row.description,
+                "unit_price": float(row.unit_price),
+                "stock": row.stock,
+                "status": row.status
             })
             
         return {

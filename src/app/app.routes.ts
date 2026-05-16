@@ -61,7 +61,7 @@ export const routes: Routes = [
       children: [
         { path: 'dashboard', component: VendedorDashboard },
         { path: 'cotizaciones', component: VendedorCotizaciones },
-        { path: 'detalle-cotizacion', component: VendedorDetalle },
+        { path: 'detalle-cotizacion/:id', component: VendedorDetalle },
         { path: 'nueva-cotizacion', component: NuevaCotizacion },
         { path: 'nueva-cotizacion-cliente', component: NuevaCotizacionCliente },
       ]

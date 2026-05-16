@@ -92,7 +92,7 @@
                                 }
                             </td>
                             <td>
-                                <a routerLink="/vendedor/detalle-cotizacion" class="action-link">
+                                <a [routerLink]="['/vendedor/detalle-cotizacion', cot.id]" class="action-link">
                                     <i class="bi bi-eye"></i> Ver
                                 </a>
                             </td>

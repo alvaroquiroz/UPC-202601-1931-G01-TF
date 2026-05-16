@@ -1,5 +1,5 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { Router, RouterLinkWithHref } from '@angular/router';
+import { ActivatedRoute, Router, RouterLinkWithHref } from '@angular/router';
 import { CotizacionesService } from '../../../core/services/cotizaciones';
 import { Cotizacion, ProductoCotizacion } from '../../../interfaces/cotizacion';
 
@@ -12,6 +12,7 @@ import { Cotizacion, ProductoCotizacion } from '../../../interfaces/cotizacion';
 export class DetalleCotizacion implements OnInit{
 
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private cotService = inject(CotizacionesService);
 
   cotizacion = signal<Cotizacion | null>(null);
@@ -24,7 +25,8 @@ export class DetalleCotizacion implements OnInit{
   total = computed(() => this.subtotal() + this.igv());
 
   async ngOnInit(){
-    const data = await this.cotService.getCotizacion(1);
+    const id = this.route.snapshot.paramMap.get('id') ?? '1';
+    const data = await this.cotService.getCotizacion(Number(id));
     this.cotizacion.set(data.cotizacion);
     this.productos.set(data.productos);
   }
