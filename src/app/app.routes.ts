@@ -49,7 +49,7 @@ export const routes: Routes = [
       children: [
         { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
         { path: 'dashboard', component: ClienteDashboard },
-        { path: 'detalle-cotizacion', component: ClienteDetalle },
+        { path: 'detalle-cotizacion/:id', component: ClienteDetalle },
         { path: 'mis-cotizaciones', component: MisCotizaciones },
         { path: 'solicitar-cotizacion', component: SolicitarCotizacion },
       ]

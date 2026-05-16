@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -7,42 +9,45 @@ import { environment } from '../../../environments/environment';
 export class ApiService {
   private baseUrl = environment.apiUrl;
 
-  async get(endpoint: string) {
+  constructor(private readonly http: HttpClient) {}
+
+  private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('access_token');
-    const res = await fetch(`${this.baseUrl}${endpoint}`, {
-      headers: { Authorization: `Bearer ${token}` }
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json'
     });
-    return res.json();
+    
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+    return headers;
+  }
+
+  async get(endpoint: string) {
+    const res: any = await firstValueFrom(
+      this.http.get(`${this.baseUrl}${endpoint}`, { headers: this.getHeaders() })
+    );
+    return res.data !== undefined ? res.data : res;
   }
 
   async post(endpoint: string, body: any) {
-    const res = await fetch(`${this.baseUrl}${endpoint}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-    return res.json();
+    const res: any = await firstValueFrom(
+      this.http.post(`${this.baseUrl}${endpoint}`, body, { headers: this.getHeaders() })
+    );
+    return res;
   }
 
   async put(endpoint: string, body: any) {
-    const token = localStorage.getItem('access_token');
-    const res = await fetch(`${this.baseUrl}${endpoint}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify(body)
-    });
-    return res.json();
+    const res: any = await firstValueFrom(
+      this.http.put(`${this.baseUrl}${endpoint}`, body, { headers: this.getHeaders() })
+    );
+    return res;
   }
 
   async delete(endpoint: string) {
-    const token = localStorage.getItem('access_token');
-    const res = await fetch(`${this.baseUrl}${endpoint}`, {
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    return res.json();
+    const res: any = await firstValueFrom(
+      this.http.delete(`${this.baseUrl}${endpoint}`, { headers: this.getHeaders() })
+    );
+    return res;
   }
 }
