@@ -1,5 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { Router, RouterLinkWithHref } from '@angular/router';
+import { CotizacionesService } from '../../../core/services/cotizaciones';
 
 @Component({
   selector: 'app-mis-cotizaciones',
@@ -7,16 +8,21 @@ import { Router, RouterLinkWithHref } from '@angular/router';
   templateUrl: './mis-cotizaciones.html',
   styleUrl: './mis-cotizaciones.css',
 })
-export class MisCotizaciones {
+export class MisCotizaciones implements OnInit {
   private router = inject(Router);
+  private cotizacionesService = inject(CotizacionesService);
+  
+  cotizaciones = signal<any[]>([]);
 
-  cotizaciones = [
-    {id: 'COT-001', fecha: '20-04-2026', productos: 3, total: 'S/. 1,200.00', estado: 'Pendiente'},
-    {id: 'COT-002', fecha: '18-04-2026', productos: 5, total: 'S/. 3,750.00', estado: 'Aprobada'},
-    {id: 'COT-003', fecha: '15-04-2026', productos: 2, total: 'S/. 890.00', estado: 'Observada'},
-    {id: 'COT-004', fecha: '10-04-2026', productos: 7, total: 'S/. 6,200.00', estado: 'Aprobada'},
-    {id: 'COT-005', fecha: '05-04-2026', productos: 1, total: 'S/. 450.00', estado: 'Rechazada'},
-  ];
+  async ngOnInit() {
+    const clienteId = 3;
+    try {
+      const data = await this.cotizacionesService.getCotizacionesCliente(clienteId);
+      this.cotizaciones.set(data);
+    } catch (error) {
+      console.error("Error al cargar cotizaciones", error);
+    }
+  }
 
   logout(event: Event): void{
     event.preventDefault();

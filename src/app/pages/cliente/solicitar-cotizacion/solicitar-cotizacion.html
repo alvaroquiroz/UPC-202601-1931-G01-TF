@@ -29,7 +29,7 @@
         <!-- PRODUCTOS -->
         <div class="col-lg-8">
             <div class="row g-3">
-                @for(producto of productos; track producto.id){
+                @for(producto of productos(); track producto.id){
                     <div class="col-md-6">
                         <div class="product-card">
                             <div class="product-title">{{ producto.nombre }}</div>

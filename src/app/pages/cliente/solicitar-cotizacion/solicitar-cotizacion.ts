@@ -1,6 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLinkWithHref } from '@angular/router';
+import { ProductosService } from '../../../core/services/productos';
+import { CotizacionesService } from '../../../core/services/cotizaciones';
+import { Producto } from '../../../interfaces/producto';
 
 @Component({
   selector: 'app-solicitar-cotizacion',
@@ -8,26 +11,29 @@ import { Router, RouterLinkWithHref } from '@angular/router';
   templateUrl: './solicitar-cotizacion.html',
   styleUrl: './solicitar-cotizacion.css',
 })
-export class SolicitarCotizacion {
+export class SolicitarCotizacion implements OnInit {
   private router = inject(Router);
+  private productosService = inject(ProductosService);
+  private cotizacionesService = inject(CotizacionesService);
+  private fb = inject(FormBuilder);
   
   cotizacionForm: FormGroup;
-
-  productos = [
-    { id: 1, nombre: 'Laptop Dell XPS 15', precio: 4500.00, descripcion: 'Laptop profesional 15"' },
-    { id: 2, nombre: 'Monitor LG 27"', precio: 1200.00, descripcion: 'Monitor 4K IPS' },
-    { id: 3, nombre: 'Teclado Mecánico', precio: 350.00, descripcion: 'Teclado mecánico RGB' },
-    { id: 4, nombre: 'Mouse Inalámbrico', precio: 180.00, descripcion: 'Mouse ergonómico' },
-    { id: 5, nombre: 'Auriculares Sony', precio: 650.00, descripcion: 'Auriculares noise cancelling' },
-    { id: 6, nombre: 'Webcam Logitech', precio: 420.00, descripcion: 'Webcam 4K' },
-  ];
-
+  productos = signal<Producto[]>([]);
   carrito: { id: number, nombre: string, precio: number, cantidad: number }[] = [];
 
-  constructor(private fb: FormBuilder){
+  constructor(){
     this.cotizacionForm = this.fb.group({
       observaciones: ['']
     });
+  }
+  
+  async ngOnInit() {
+    try {
+      const data = await this.productosService.getProductos();
+      this.productos.set(data);
+    } catch (error) {
+      console.error("Error al cargar productos desde el contenedor:", error);
+    }
   }
 
   agregarProducto(producto: any){
@@ -35,7 +41,12 @@ export class SolicitarCotizacion {
     if(existe){
       existe.cantidad++;
     } else {
-      this.carrito.push({ ...producto, cantidad: 1 });
+      this.carrito.push({ 
+        id: producto.id, 
+        nombre: producto.nombre, 
+        precio: producto.precio, 
+        cantidad: 1 
+      });
     }
   }
 
@@ -48,7 +59,7 @@ export class SolicitarCotizacion {
     if(item){
       if(item.cantidad > 1){
         item.cantidad--;
-      }else{
+      } else {
         this.carrito = this.carrito.filter(p => p.id !== id);
       }
     }
@@ -58,13 +69,33 @@ export class SolicitarCotizacion {
     return this.carrito.reduce((acc, p) => acc + p.precio * p.cantidad, 0).toFixed(2);
   }
 
-  _submit(){
+  async _submit(){
     if(this.carrito.length === 0){
       alert('Agrega al menos un producto a la cotización.');
       return;
     }
-    console.log({ productos: this.carrito, ...this.cotizacionForm.value });
-    alert('Cotización enviada correctamente.');
+
+    const subtotal = this.carrito.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
+    const igv = subtotal * 0.18;
+    const total = subtotal + igv;
+    const clienteId = 3; 
+    const payload = {
+      clienteId: clienteId,
+      observaciones: this.cotizacionForm.value.observaciones,
+      subtotal: subtotal,
+      igv: igv,
+      total: total,
+      productos: this.carrito
+    };
+
+    try {
+      await this.cotizacionesService.crearCotizacion(payload);
+      alert('Cotización enviada correctamente.');
+      this.router.navigate(['/cliente/mis-cotizaciones']);
+    } catch (error) {
+      console.error(error);
+      alert('Hubo un error al enviar la cotización.');
+    }
   }
 
   logout(event: Event): void{
