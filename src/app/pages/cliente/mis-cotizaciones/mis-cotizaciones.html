@@ -8,14 +8,14 @@
         <div class="d-flex align-items-center gap-3">
             <div class="user-chip">
                 <div class="avatar">JP</div>
-            <div>
-                <div class="name">Juan Pérez</div>
-                <div class="email">cliente&#64;ejemplo.com</div>
+                <div>
+                    <div class="name">Juan Pérez</div>
+                    <div class="email">cliente&#64;ejemplo.com</div>
+                </div>
             </div>
-        </div>
-        <a (click)="logout($event)" class="btn btn-light-ui btn-sm" style="cursor:pointer;">
-            <i class="bi bi-box-arrow-right"></i> Salir
-        </a>
+            <a (click)="logout($event)" class="btn btn-light-ui btn-sm" style="cursor:pointer;">
+                <i class="bi bi-box-arrow-right"></i> Salir
+            </a>
         </div>
     </div>
 </nav>
@@ -28,56 +28,59 @@
             <h1 class="page-title">Mis Cotizaciones</h1>
             <p class="page-subtitle">Consulta el estado de todas tus cotizaciones</p>
         </div>
-        <a routerLink="/cliente/solicitar-cotizacion" class="btn btn-dark">
-            <i class="bi bi-plus-lg"></i> Nueva Cotización
-        </a>
+        <div class="d-flex gap-2">
+            <a routerLink="/cliente/dashboard" class="btn btn-light-ui">
+                <i class="bi bi-arrow-left"></i> Volver al Panel
+            </a>
+            <a routerLink="/cliente/solicitar-cotizacion" class="btn btn-dark">
+                <i class="bi bi-plus-lg"></i> Nueva Cotización
+            </a>
+        </div>
     </div>
 
-<!-- TABLA -->
-<div class="card-ui">
-    <div class="table-wrap">
-        <table class="table-ui">
-            <thead>
-                <tr>
-                    <th>Código</th>
-                    <th>Fecha</th>
-                    <th>Productos</th>
-                    <th>Total</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                @for(cot of cotizaciones; track cot.id){
-                <tr>
-                    <td class="quote-code">{{ cot.id }}</td>
-                    <td class="muted">{{ cot.fecha }}</td>
-                    <td>{{ cot.productos }} productos</td>
-                    <td><strong>{{ cot.total }}</strong></td>
-                <td>
-                    @if(cot.estado === 'Pendiente'){
-                    <span class="badge-ui badge-sent">{{ cot.estado }}</span>
+    <div class="card-ui">
+        <div class="table-wrap">
+            <table class="table-ui">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Fecha</th>
+                        <th>Productos</th>
+                        <th>Total</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for(cot of cotizaciones(); track cot.id){
+                        <tr>
+                            <td class="quote-code">{{ cot.id }}</td>
+                            <td class="muted">{{ cot.fecha }}</td>
+                            <td>{{ cot.productos }} productos</td>
+                            <td><strong>{{ cot.total }}</strong></td>
+                            <td>
+                                @if(cot.estado === 'Pendiente'){
+                                    <span class="badge-ui badge-sent">{{ cot.estado }}</span>
+                                }
+                                @if(cot.estado === 'Aprobada'){
+                                    <span class="badge-ui badge-accepted">{{ cot.estado }}</span>
+                                }
+                                @if(cot.estado === 'Observada'){
+                                    <span class="badge-ui badge-draft">{{ cot.estado }}</span>
+                                }
+                                @if(cot.estado === 'Rechazada'){
+                                    <span class="badge-ui badge-rejected">{{ cot.estado }}</span>
+                                }
+                            </td>
+                            <td>
+                                <a [routerLink]="['/cliente/detalle-cotizacion', cot.id]" class="action-link">
+                                    <i class="bi bi-eye"></i> Ver detalle
+                                </a>
+                            </td>
+                        </tr>
                     }
-                    @if(cot.estado === 'Aprobada'){
-                    <span class="badge-ui badge-accepted">{{ cot.estado }}</span>
-                    }
-                    @if(cot.estado === 'Observada'){
-                    <span class="badge-ui badge-draft">{{ cot.estado }}</span>
-                    }
-                    @if(cot.estado === 'Rechazada'){
-                    <span class="badge-ui badge-rejected">{{ cot.estado }}</span>
-                    }
-                </td>
-                <td>
-                    <a routerLink="/cliente/detalle-cotizacion" class="action-link">
-                        <i class="bi bi-eye"></i> Ver detalle
-                    </a>
-                </td>
-                </tr>
-                }
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
-
 </div>

@@ -1,5 +1,6 @@
-import { Component, inject } from '@angular/core';
-import { Router, RouterLinkWithHref } from '@angular/router';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { ActivatedRoute, Router, RouterLinkWithHref } from '@angular/router';
+import { CotizacionesService } from '../../../core/services/cotizaciones';
 
 @Component({
   selector: 'app-detalle-cotizacion',
@@ -7,38 +8,43 @@ import { Router, RouterLinkWithHref } from '@angular/router';
   templateUrl: './detalle-cotizacion.html',
   styleUrl: './detalle-cotizacion.css',
 })
-export class DetalleCotizacion {
+export class DetalleCotizacion implements OnInit {
+  private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private cotService = inject(CotizacionesService);
+  
+  cotizacion = signal<any>(null);
 
-  cotizacion = {
-    id: 'COT-002',
-    fecha: '18-04-2026',
-    estado: 'Aprobada',
-    observaciones: 'Entrega urgente, contactar al cliente para coordinar detalles.',
-    cliente:{
-      nombre:'Jean Carlo Perez',
-      correo:'jeanperez@empresa.com',
-      telefono: '978452163',
-      empresa: 'AllInTech S.A.C',
-    },
-    productos: [
-      {nombre: 'MACBOOK PRO 16"', cantidad: 1, precio: 4500.00},
-      {nombre: 'Monitor Asus 32"', cantidad: 2, precio: 3200.00},
-      {nombre: 'Mouse Logitech ProLight 2', cantidad: 4, precio: 1000.00},
-    ]
-  };
-
+  async ngOnInit() {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      try {
+        const response = await this.cotService.getCotizacion(id);
+        const dataUnwrapped = response.data ? response.data : response;
+        
+        this.cotizacion.set(dataUnwrapped);
+      } catch (error) {
+        console.error("Error al recuperar el detalle de la cotización:", error);
+      }
+    }
+  }
+  
   get subtotal(){
-    return this.cotizacion.productos
-      .reduce((acc, p) => acc + p.precio * p.cantidad, 0);
+    const cot = this.cotizacion();
+    if (!cot || !cot.productos) return 0;
+    return cot.productos.reduce((acc: number, p: any) => {
+      const precio = p.precio || p.unit_price || 0;
+      const cantidad = p.cantidad || p.quantity || 0;
+      return acc + (precio * cantidad);
+    }, 0);
   }
 
-  get igv(){
-    return this.subtotal * 0.18;
+  get igv(){ 
+    return this.subtotal * 0.18; 
   }
-
-  get total(){
-    return this.subtotal + this.igv;
+  
+  get total(){ 
+    return this.subtotal + this.igv; 
   }
 
   logout(event: Event): void{
