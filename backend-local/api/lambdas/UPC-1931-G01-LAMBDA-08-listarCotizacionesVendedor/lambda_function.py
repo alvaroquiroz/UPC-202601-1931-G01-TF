@@ -30,7 +30,7 @@ def lambda_handler(event, context):
             FROM quotations q
             INNER JOIN quotation_statuses qs ON q.status_id = qs.id
             INNER JOIN users u ON q.client_user_id = u.id
-            WHERE q.vendor_user_id = ?
+            WHERE (q.vendor_user_id = ? OR q.vendor_user_id IS NULL)
         """
         params = [vendor_id]
 
