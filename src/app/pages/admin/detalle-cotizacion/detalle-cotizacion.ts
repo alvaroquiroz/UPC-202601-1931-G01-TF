@@ -1,5 +1,6 @@
-import { Component, inject } from '@angular/core';
-import { Router, RouterLinkWithHref } from '@angular/router';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ActivatedRoute, Router, RouterLinkWithHref } from '@angular/router';
+import { CotizacionesService } from '../../../core/services/cotizaciones';
 
 @Component({
   selector: 'app-detalle-cotizacion',
@@ -7,46 +8,47 @@ import { Router, RouterLinkWithHref } from '@angular/router';
   templateUrl: './detalle-cotizacion.html',
   styleUrl: './detalle-cotizacion.css',
 })
-export class DetalleCotizacion {
+export class DetalleCotizacion implements OnInit{
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private cotService = inject(CotizacionesService);
 
-  cotizacion = {
-    id: 'COT-001',
-    fecha: '20 Abr 2026',
-    estado: 'Pendiente',
-    observaciones: 'Entrega urgente para el lunes.',
-    cliente: {
-      nombre: 'Juan Pérez',
-      correo: 'juan@empresa.com',
-      telefono: '+51 999 999 999',
-      empresa: 'Tech SAC'
-    },
-    vendedor: {
-      nombre: 'Carlos Vendedor',
-      correo: 'carlos@empresa.com',
-    },
-    productos: [
-      { nombre: 'Laptop Dell XPS 15', cantidad: 1, precio: 4500.00 },
-      { nombre: 'Monitor LG 27"',     cantidad: 2, precio: 1200.00 },
-      { nombre: 'Mouse Inalámbrico',  cantidad: 3, precio: 180.00  },
-    ]
-  };
+  cotizacion = signal<any>(null);
+  productos = signal<any[]>([]);
 
-  get subtotal(){
-    return this.cotizacion.productos
-      .reduce((acc, p) => acc + p.precio * p.cantidad, 0);
+  subtotal = computed(() => 
+    this.productos().reduce((acc: number, p: any) => acc + (p.line_subtotal || 0), 0)
+  );
+
+  igv   = computed(() => this.subtotal() * 0.18);
+  total = computed(() => this.subtotal() + this.igv());
+
+  async ngOnInit() {
+    const id = this.route.snapshot.paramMap.get('id') ?? '1';
+    console.log('ID capturado:', id);
+    try {
+      const data = await this.cotService.getCotizacion(Number(id));
+      console.log('Data recibida:', data);
+      this.cotizacion.set(data.cotizacion);
+      this.productos.set(data.productos);
+    } catch (error) {
+      console.error('Error al cargar detalle:', error);
+    }
   }
-
-  get igv(){ return this.subtotal * 0.18; }
-  get total(){ return this.subtotal + this.igv; }
-
-  aprobar(){
-    this.cotizacion.estado = 'Aprobada';
+  
+  async aprobar() {
+    const cot = this.cotizacion();
+    if (!cot) return;
+    await this.cotService.aprobar(cot.id);
+    this.cotizacion.set({ ...cot, estado: 'Aprobada' });
     alert('Cotización aprobada correctamente.');
   }
 
-  rechazar(){
-    this.cotizacion.estado = 'Rechazada';
+  async rechazar() {
+    const cot = this.cotizacion();
+    if (!cot) return;
+    await this.cotService.rechazar(cot.id);
+    this.cotizacion.set({ ...cot, estado: 'Rechazada' });
     alert('Cotización rechazada.');
   }
 

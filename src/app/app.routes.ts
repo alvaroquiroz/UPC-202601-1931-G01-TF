@@ -21,6 +21,7 @@ import { Cotizaciones as VendedorCotizaciones } from './pages/vendedor/cotizacio
 import { DetalleCotizacion as VendedorDetalle } from './pages/vendedor/detalle-cotizacion/detalle-cotizacion';
 import { NuevaCotizacion } from './pages/vendedor/nueva-cotizacion/nueva-cotizacion';
 import { NuevaCotizacionCliente } from './pages/vendedor/nueva-cotizacion-cliente/nueva-cotizacion-cliente';
+import { Catalogo } from './pages/admin/catalogo/catalogo';
 
 
 export const routes: Routes = [
@@ -36,10 +37,11 @@ export const routes: Routes = [
         { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
         { path: 'dashboard', component: AdminDashboard },
         { path: 'cotizaciones', component: AdminCotizaciones },
-        { path: 'detalle-cotizacion', component: AdminDetalle },
+        { path: 'detalle-cotizacion/:id', component: AdminDetalle },
         { path: 'editar-usuario', component: EditarUsuario },
         { path: 'reportes', component: Reportes },
         { path: 'usuarios', component: Usuarios },
+        { path: 'catalogo', component: Catalogo },
       ]
     },
 

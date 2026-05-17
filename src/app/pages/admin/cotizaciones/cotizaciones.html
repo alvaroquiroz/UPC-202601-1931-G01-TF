@@ -15,6 +15,9 @@
       <a routerLink="/admin/reportes" class="btn btn-light-ui btn-sm">
         <i class="bi bi-bar-chart"></i> Reportes
       </a>
+      <a routerLink="/admin/catalogo" class="btn btn-light-ui btn-sm">
+        <i class="bi bi-box-seam"></i> Catálogo
+      </a>
       <a (click)="logout($event)" class="btn btn-light-ui btn-sm" style="cursor:pointer;">
         <i class="bi bi-box-arrow-right"></i> Salir
       </a>
@@ -34,23 +37,23 @@
   <div class="card-ui toolbar-card mb-4">
     <div class="d-flex gap-2 flex-wrap">
       <button (click)="filtrar('Todos')"
-        [class]="filtro === 'Todos' ? 'btn btn-dark btn-sm' : 'btn btn-light-ui btn-sm'">
+        [class]="filtro() === 'Todos' ? 'btn btn-dark btn-sm' : 'btn btn-light-ui btn-sm'">
         Todos
       </button>
       <button (click)="filtrar('Pendiente')"
-        [class]="filtro === 'Pendiente' ? 'btn btn-dark btn-sm' : 'btn btn-light-ui btn-sm'">
+        [class]="filtro() === 'Pendiente' ? 'btn btn-dark btn-sm' : 'btn btn-light-ui btn-sm'">
         Pendientes
       </button>
       <button (click)="filtrar('Aprobada')"
-        [class]="filtro === 'Aprobada' ? 'btn btn-dark btn-sm' : 'btn btn-light-ui btn-sm'">
+        [class]="filtro() === 'Aprobada' ? 'btn btn-dark btn-sm' : 'btn btn-light-ui btn-sm'">
         Aprobadas
       </button>
       <button (click)="filtrar('Observada')"
-        [class]="filtro === 'Observada' ? 'btn btn-dark btn-sm' : 'btn btn-light-ui btn-sm'">
+        [class]="filtro() === 'Observada' ? 'btn btn-dark btn-sm' : 'btn btn-light-ui btn-sm'">
         Observadas
       </button>
       <button (click)="filtrar('Rechazada')"
-        [class]="filtro === 'Rechazada' ? 'btn btn-dark btn-sm' : 'btn btn-light-ui btn-sm'">
+        [class]="filtro() === 'Rechazada' ? 'btn btn-dark btn-sm' : 'btn btn-light-ui btn-sm'">
         Rechazadas
       </button>
     </div>
@@ -73,14 +76,14 @@
           </tr>
         </thead>
         <tbody>
-          @for(cot of cotizacionesFiltradas; track cot.id){
+          @for(cot of cotizacionesFiltradas(); track cot.id){
             <tr>
-              <td class="quote-code">{{ cot.id }}</td>
+              <td class="quote-code">{{ cot.code }}</td>
               <td class="fw-bold">{{ cot.cliente }}</td>
-              <td class="muted">{{ cot.empresa }}</td>
+              <td class="muted">{{ cot.empresa_cliente }}</td>
               <td class="muted">{{ cot.vendedor }}</td>
-              <td class="muted">{{ cot.fecha }}</td>
-              <td><strong>{{ cot.total }}</strong></td>
+              <td class="muted">{{ cot.quotaion_date }}</td>
+              <td><strong>S/. {{ cot.total }}</strong></td>
               <td>
                 @if(cot.estado === 'Pendiente'){
                   <span class="badge-ui badge-sent">{{ cot.estado }}</span>
@@ -96,7 +99,7 @@
                 }
               </td>
               <td>
-                <a routerLink="/admin/detalle-cotizacion" class="action-link">
+                <a [routerLink]="['/admin/detalle-cotizacion', cot.id]" class="action-link">
                   <i class="bi bi-eye"></i> Ver
                 </a>
                 <button (click)="eliminar(cot.id)" class="action-link danger btn btn-link p-0">

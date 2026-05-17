@@ -1,5 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLinkWithHref } from '@angular/router';
+import { CotizacionesService } from '../../../core/services/cotizaciones';
 
 @Component({
   selector: 'app-cotizaciones',
@@ -9,30 +10,32 @@ import { Router, RouterLinkWithHref } from '@angular/router';
 })
 export class Cotizaciones {
   private router = inject(Router);
+  private cotService = inject(CotizacionesService);
 
-  cotizaciones = [
-    { id: 'COT-001', cliente: 'Juan Pérez',   empresa: 'Tech SAC',       vendedor: 'Carlos V.', fecha: '20 Abr 2026', total: 'S/. 1,200.00', estado: 'Pendiente' },
-    { id: 'COT-002', cliente: 'María López',  empresa: 'Soluciones SRL', vendedor: 'Ana R.',    fecha: '18 Abr 2026', total: 'S/. 3,750.00', estado: 'Aprobada'  },
-    { id: 'COT-003', cliente: 'Carlos Ruiz',  empresa: 'Grupo Norte',    vendedor: 'Carlos V.', fecha: '15 Abr 2026', total: 'S/. 890.00',   estado: 'Observada' },
-    { id: 'COT-004', cliente: 'Ana Torres',   empresa: 'Importex EIRL',  vendedor: 'Luis M.',   fecha: '10 Abr 2026', total: 'S/. 6,200.00', estado: 'Aprobada'  },
-    { id: 'COT-005', cliente: 'Luis Mamani',  empresa: 'Andina Corp',    vendedor: 'Ana R.',    fecha: '05 Abr 2026', total: 'S/. 450.00',   estado: 'Rechazada' },
-    { id: 'COT-006', cliente: 'Rosa Quispe',  empresa: 'Digital SAC',    vendedor: 'Luis M.',   fecha: '02 Abr 2026', total: 'S/. 2,100.00', estado: 'Pendiente' },
-    { id: 'COT-007', cliente: 'Pedro Flores', empresa: 'Inversiones JL', vendedor: 'Carlos V.', fecha: '01 Abr 2026', total: 'S/. 980.00',   estado: 'Aprobada'  },
-  ];
+  cotizaciones = signal<any>([]);
 
-  filtro: string = 'Todos';
+  filtro = signal<string>('Todos');
 
-  get cotizacionesFiltradas(){
-    if(this.filtro === 'Todos') return this.cotizaciones;
-    return this.cotizaciones.filter(c => c.estado === this.filtro);
-  }
+  cotizacionesFiltradas = computed(() => {
+    if(this.filtro() === 'Todos') return this.cotizaciones();
+    return this.cotizaciones().filter((c:any) => c.estado === this.filtro());
+  });
 
-  eliminar(id: string){
-    this.cotizaciones = this.cotizaciones.filter(c => c.id !== id);
+  async ngOnInit() {
+    try {
+      const data = await this.cotService.getCotizacionesAdmin();
+      this.cotizaciones.set(data);
+    } catch (error) {
+      console.error('Error al cargar cotizaciones admin:', error);
+    }
   }
 
   filtrar(estado: string){
-    this.filtro = estado;
+    this.filtro.set(estado);
+  }
+
+  eliminar(id: string){
+    alert(`Cotización ${id} eliminada.`);
   }
 
   logout(event: Event){
