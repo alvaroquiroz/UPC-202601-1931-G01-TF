@@ -5,6 +5,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
+from fastapi.responses import JSONResponse
 
 app = FastAPI(title="API Gateway Simulado - Módulo Cliente")
 
@@ -21,13 +22,38 @@ class VendedorActionBody(BaseModel):
     user_id: int
     comment: Optional[str] = None
 
+# def invocar_lambda(nombre_carpeta: str, event: dict):
+#     ruta_script = os.path.join(os.path.dirname(__file__), "lambdas", nombre_carpeta, "lambda_function.py")
+#     spec = importlib.util.spec_from_file_location("lambda_module", ruta_script)
+#     modulo = importlib.util.module_from_spec(spec)
+#     spec.loader.exec_module(modulo)
+#     respuesta = modulo.lambda_handler(event, {})
+#     return json.loads(respuesta['body'])
+
 def invocar_lambda(nombre_carpeta: str, event: dict):
     ruta_script = os.path.join(os.path.dirname(__file__), "lambdas", nombre_carpeta, "lambda_function.py")
+
     spec = importlib.util.spec_from_file_location("lambda_module", ruta_script)
     modulo = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(modulo)
+
     respuesta = modulo.lambda_handler(event, {})
-    return json.loads(respuesta['body'])
+
+    status_code = respuesta.get("statusCode", 200)
+    body = json.loads(respuesta.get("body", "{}"))
+    headers = respuesta.get("headers", {})
+
+    return JSONResponse(
+        status_code=status_code,
+        content=body,
+        headers=headers
+    )
+
+@app.post("/api/v1/auth/login")
+async def login(request: Request):
+    body_bytes = await request.body()
+    event = {"httpMethod": "POST", "body": body_bytes.decode("utf-8")}
+    return invocar_lambda("UPC-1931-G01-LAMBDA-01-login", event)
 
 @app.get("/api/v1/productos")
 async def listar_productos(request: Request):
