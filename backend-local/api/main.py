@@ -31,22 +31,22 @@ def invocar_lambda(nombre_carpeta: str, event: dict):
     respuesta = modulo.lambda_handler(event, {})
     return json.loads(respuesta['body'])
 
-@app.get("/api/v1/productos")
+@app.get("/productos")
 async def listar_productos(request: Request):
     event = {"httpMethod": "GET", "queryStringParameters": dict(request.query_params)}
     return invocar_lambda("UPC-1931-G01-LAMBDA-04-listarProductos", event)
 
-@app.get("/api/v1/cotizaciones")
+@app.get("/cotizaciones")
 async def listar_cotizaciones(request: Request):
     event = {"httpMethod": "GET", "queryStringParameters": dict(request.query_params)}
     return invocar_lambda("UPC-1931-G01-LAMBDA-05-listarCotizaciones", event)
 
-@app.get("/api/v1/cotizaciones/{id}")
+@app.get("/cotizaciones/{id}")
 async def obtener_detalle_cotizacion(id: str, request: Request):
     event = {"httpMethod": "GET", "pathParameters": {"id": id}}
     return invocar_lambda("UPC-1931-G01-LAMBDA-06-obtenerDetalleCotizacion", event)
 
-@app.post("/api/v1/cotizaciones")
+@app.post("/cotizaciones")
 async def crear_cotizacion(request: Request):
     body_bytes = await request.body()
     event = {"httpMethod": "POST", "body": body_bytes.decode('utf-8')}
