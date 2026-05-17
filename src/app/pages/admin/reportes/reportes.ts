@@ -1,43 +1,106 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { Router, RouterLinkWithHref } from '@angular/router';
 import { ChartConfiguration, ChartData } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
+import { CotizacionesService } from '../../../core/services/cotizaciones';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-reportes',
-  imports: [RouterLinkWithHref, BaseChartDirective],
+  imports: [RouterLinkWithHref, BaseChartDirective, DecimalPipe],
   templateUrl: './reportes.html',
   styleUrl: './reportes.css',
 })
-export class Reportes {
+export class Reportes implements OnInit{
   private router = inject(Router);
+  private cotService = inject(CotizacionesService);
 
-  resumen = [
-    { label: 'Total Cotizaciones', valor: 124, icono: 'bi-file-earmark-text' },
-    { label: 'Monto Total',        valor: 'S/. 89,450', icono: 'bi-cash-stack' },
-    { label: 'Tasa de Aprobación', valor: '71.7%',      icono: 'bi-check-circle' },
-    { label: 'Promedio por Cot.',  valor: 'S/. 721',    icono: 'bi-graph-up' },
-  ];
+  topClientes      = signal<any[]>([]);
+  reporteEstados   = signal<any[]>([]);
+  reporteMeses     = signal<any[]>([]);
+  reporteVendedores = signal<any[]>([]);
+
+  totalCotizaciones = signal<number>(0);
+  montoTotal = signal<number>(0);
+  tasaAprobacion = signal<string>('0%');
+  promedioPorCot = signal<string>('S/. 0');;
+
+  async ngOnInit() {
+    try {
+      const estados = await this.cotService.getReporteEstados();
+      this.reporteEstados.set(estados);
+
+      const meses = await this.cotService.getReporteMeses();
+      this.reporteMeses.set(meses);
+
+      const clientes = await this.cotService.getRankingClientes();
+      this.topClientes.set(clientes);
+
+      const vendedores = await this.cotService.getReporteVendedores();
+      this.reporteVendedores.set(vendedores);
+
+      this.calcularResumen();
+      this.actualizarGraficas();
+    } catch (error) {
+      console.error('Error al cargar reportes:', error);
+    }
+  }
+
+  calcularResumen() {
+    const estados = this.reporteEstados();
+    const total = estados.reduce((acc, e) => acc + e.total, 0);
+    const monto = estados.reduce((acc, e) => acc + e.monto_total, 0);
+    const aprobadas = estados.find(e => e.estado === 'Aprobada')?.total || 0;
+    const tasa = total > 0 ? ((aprobadas / total) * 100).toFixed(1) + '%' : '0%';
+    const promedio = total > 0 ? 'S/. ' + (monto / total).toFixed(0) : 'S/. 0';
+
+    this.totalCotizaciones.set(total);
+    this.montoTotal.set(monto);
+    this.tasaAprobacion.set(tasa);
+    this.promedioPorCot.set(promedio);
+  }
+
+  actualizarGraficas() {
+    const meses = this.reporteMeses().slice().reverse();
+    this.barChartData = {
+      labels: meses.map(m => m.periodo),
+      datasets: [
+        {
+          label: 'Cotizaciones',
+          data: meses.map(m => m.total),
+          backgroundColor: 'rgba(22, 163, 74, 0.8)',
+          borderRadius: 8,
+        }
+      ]
+    };
+
+  this.lineChartData = {
+      labels: meses.map(m => m.periodo),
+      datasets: [{
+        label: 'Monto (S/.)',
+        data: meses.map(m => m.monto_total),
+        borderColor: '#04041f',
+        backgroundColor: 'rgba(4, 4, 31, 0.08)',
+        fill: true,
+        tension: 0.4,
+        pointRadius: 5,
+      }]
+    };
+
+    const vendedores = this.reporteVendedores();
+    this.donutChartData = {
+      labels: vendedores.map(v => v.vendedor),
+      datasets: [{
+        data: vendedores.map(v => v.total_cotizaciones),
+        backgroundColor: ['#04041f', '#16a34a', '#f59e0b'],
+        borderWidth: 0,
+        hoverOffset: 6
+      }]
+    };
+  }
 
   // GRÁFICA DE BARRAS — ventas por mes
-  barChartData: ChartData<'bar'> = {
-    labels: ['Nov', 'Dic', 'Ene', 'Feb', 'Mar', 'Abr'],
-    datasets: [
-      {
-        label: 'Aprobadas',
-        data: [48, 65, 52, 78, 70, 89],
-        backgroundColor: 'rgba(22, 163, 74, 0.8)',
-        borderRadius: 8,
-      },
-      {
-        label: 'Rechazadas',
-        data: [10, 15, 12, 18, 16, 10],
-        backgroundColor: 'rgba(225, 29, 72, 0.8)',
-        borderRadius: 8,
-      }
-    ]
-  };
-
+  barChartData: ChartData<'bar'> = { labels: [], datasets: [] };
   barChartOptions: ChartConfiguration['options'] = {
     responsive: true,
     plugins: { legend: { position: 'bottom' } },
@@ -48,19 +111,7 @@ export class Reportes {
   };
 
   // GRÁFICA DE LÍNEA — monto por mes
-  lineChartData: ChartData<'line'> = {
-    labels: ['Nov', 'Dic', 'Ene', 'Feb', 'Mar', 'Abr'],
-    datasets: [{
-      label: 'Monto (S/.)',
-      data: [12000, 18500, 14200, 22000, 19800, 25400],
-      borderColor: '#04041f',
-      backgroundColor: 'rgba(4, 4, 31, 0.08)',
-      fill: true,
-      tension: 0.4,
-      pointRadius: 5,
-    }]
-  };
-
+  lineChartData: ChartData<'line'> = { labels: [], datasets: [] };
   lineChartOptions: ChartConfiguration['options'] = {
     responsive: true,
     plugins: { legend: { display: false } },
@@ -71,16 +122,7 @@ export class Reportes {
   };
 
   // GRÁFICA DE DONA — por vendedor
-  donutChartData: ChartData<'doughnut'> = {
-    labels: ['Carlos Vega', 'Ana Ríos', 'Luis M.'],
-    datasets: [{
-      data: [45, 38, 41],
-      backgroundColor: ['#04041f', '#16a34a', '#f59e0b'],
-      borderWidth: 0,
-      hoverOffset: 6
-    }]
-  };
-
+  donutChartData: ChartData<'doughnut'> = { labels: [], datasets: [] };
   donutChartOptions: ChartConfiguration<'doughnut'>['options'] = {
     responsive: true,
     cutout: '72%',
@@ -91,15 +133,6 @@ export class Reportes {
       }
     }
   };
-
-  // TABLA TOP CLIENTES
-  topClientes = [
-    { nombre: 'Ana Torres',   empresa: 'Importex EIRL',  cotizaciones: 12, total: 'S/. 24,600' },
-    { nombre: 'Luis Mamani',  empresa: 'Andina Corp',    cotizaciones: 11, total: 'S/. 18,900' },
-    { nombre: 'Juan Pérez',   empresa: 'Tech SAC',       cotizaciones: 8,  total: 'S/. 15,200' },
-    { nombre: 'Rosa Quispe',  empresa: 'Digital SAC',    cotizaciones: 7,  total: 'S/. 12,400' },
-    { nombre: 'María López',  empresa: 'Soluciones SRL', cotizaciones: 5,  total: 'S/. 9,800'  },
-  ];
 
   logout(event: Event): void {
     event.preventDefault();

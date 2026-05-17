@@ -9,7 +9,7 @@ import { environment } from '../../../environments/environment';
 export class CotizacionesService {
   private api = inject(ApiService);
 
-  // 🇪🇸 MÉTODOS REALES (Tu módulo Cliente conectado a Docker)
+  // MODULO CLIENTE
   async getCotizacionesCliente(clienteId: number): Promise<any[]> {
     return this.api.get(`/cotizaciones?clienteId=${clienteId}`);
   }
@@ -22,7 +22,7 @@ export class CotizacionesService {
     return this.api.post('/cotizaciones', payload);
   }
 
-  // Módulo Vendedor
+  // MODULO VENDEDOR
   async getCotizaciones(estado?: string): Promise<Cotizacion[]> {
     const user = JSON.parse(localStorage.getItem('access_token') || '{}');
     const vendor_id = user?.id || 2;
@@ -53,5 +53,32 @@ export class CotizacionesService {
 
   async getHistorial(id: number) {
     return this.api.get(`/vendedor/cotizaciones/${id}/historial`);
+  }
+
+  //MODULO ADMIN
+  async getUsuarios(role?: string): Promise<any[]> {
+    const query = role ? `?role=${role}` : '';
+    return this.api.get(`/admin/usuarios${query}`);
+  }
+
+  async getReporteEstados(): Promise<any[]> {
+    return this.api.get('/admin/reportes/estados');
+  }
+
+  async getReporteMeses(): Promise<any[]> {
+    return this.api.get('/admin/reportes/meses');
+  }
+
+  async getRankingClientes(): Promise<any[]> {
+    return this.api.get('/admin/reportes/clientes');
+  }
+
+  async getReporteVendedores(): Promise<any[]> {
+    return this.api.get('/admin/reportes/vendedores');
+  }
+
+  async getCotizacionesAdmin(status?: string): Promise<any[]> {
+  const query = status ? `?status=${status}` : '';
+  return this.api.get(`/admin/cotizaciones${query}`);
   }
 }

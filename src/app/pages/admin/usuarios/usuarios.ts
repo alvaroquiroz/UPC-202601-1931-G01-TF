@@ -1,39 +1,41 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Router, RouterLinkWithHref } from '@angular/router';
+import { CotizacionesService } from '../../../core/services/cotizaciones';
+import { SlicePipe } from '@angular/common';
 
 @Component({
   selector: 'app-usuarios',
-  imports: [RouterLinkWithHref],
+  imports: [RouterLinkWithHref,SlicePipe],
   templateUrl: './usuarios.html',
   styleUrl: './usuarios.css',
 })
-export class Usuarios {
+export class Usuarios implements OnInit{
   private router = inject(Router);
+  private cotService = inject(CotizacionesService);
 
-  usuarios = [
-    { id: 1, nombre: 'Juan Pérez',    correo: 'juan@tech.com',     rol: 'Cliente',  estado: 'Activo',   fecha: '01 Ene 2026' },
-    { id: 2, nombre: 'María López',   correo: 'maria@sol.com',     rol: 'Cliente',  estado: 'Activo',   fecha: '05 Ene 2026' },
-    { id: 3, nombre: 'Carlos Vega',   correo: 'carlos@emp.com',    rol: 'Vendedor', estado: 'Activo',   fecha: '10 Ene 2026' },
-    { id: 4, nombre: 'Ana Ríos',      correo: 'ana@emp.com',       rol: 'Vendedor', estado: 'Activo',   fecha: '12 Ene 2026' },
-    { id: 5, nombre: 'Luis Mamani',   correo: 'luis@andina.com',   rol: 'Cliente',  estado: 'Bloqueado', fecha: '15 Ene 2026' },
-    { id: 6, nombre: 'Rosa Quispe',   correo: 'rosa@dig.com',      rol: 'Cliente',  estado: 'Activo',   fecha: '20 Ene 2026' },
-    { id: 7, nombre: 'Pedro Flores',  correo: 'pedro@inv.com',     rol: 'Vendedor', estado: 'Bloqueado', fecha: '22 Ene 2026' },
-    { id: 8, nombre: 'Admin Sistema', correo: 'admin@empresa.com', rol: 'Admin',    estado: 'Activo',   fecha: '01 Ene 2026' },
-  ];
+  usuarios = signal<any[]>([]);
+  filtro = signal<string>('Todos');
 
-  filtro: string = 'Todos';
+  usuariosFiltrados = computed(() => {
+    if (this.filtro() === 'Todos') return this.usuarios();
+    return this.usuarios().filter(u => u.role.toLowerCase() === this.filtro().toLowerCase());
+  });
 
-  get usuariosFiltrados(){
-    if(this.filtro === 'Todos') return this.usuarios;
-    return this.usuarios.filter(u => u.rol === this.filtro);
+  async ngOnInit() {
+    try {
+      const data = await this.cotService.getUsuarios();
+      this.usuarios.set(data);
+    } catch (error) {
+      console.error('Error al cargar usuarios:', error);
+    }
   }
 
   filtrar(rol: string){
-    this.filtro = rol;
+    this.filtro.set(rol);
   }
 
   bloquear(usuario: any){
-    usuario.estado = usuario.estado === 'Activo' ? 'Bloqueado' : 'Activo';
+    usuario.status = usuario.status === 'Activo' ? 'Inactivo' : 'Activo';
   }
 
   eliminar(id: number){

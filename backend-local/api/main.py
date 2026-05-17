@@ -91,3 +91,33 @@ async def rechazar_cotizacion(id: str, body: VendedorActionBody):
 async def historial_cotizacion(id: str, request: Request):
     event = {"httpMethod": "GET", "pathParameters": {"id": id}}
     return invocar_lambda("UPC-1931-G01-LAMBDA-13-historialCotizacion", event)
+
+@app.get("/api/v1/admin/usuarios")
+async def listar_usuarios(request: Request):
+    event = {"httpMethod": "GET", "queryStringParameters": dict(request.query_params)}
+    return invocar_lambda("UPC-1931-G01-LAMBDA-14-listarUsuarios", event)
+
+@app.get("/api/v1/admin/reportes/estados")
+async def reportes_por_estado(request: Request):
+    event = {"httpMethod": "GET", "queryStringParameters": dict(request.query_params)}
+    return invocar_lambda("UPC-1931-G01-LAMBDA-15-reportesPorEstado", event)
+
+@app.get("/api/v1/admin/reportes/meses")
+async def reportes_por_mes(request: Request):
+    event = {"httpMethod": "GET", "queryStringParameters": dict(request.query_params)}
+    return invocar_lambda("UPC-1931-G01-LAMBDA-16-reportesPorMes", event)
+
+@app.get("/api/v1/admin/reportes/clientes")
+async def ranking_clientes(request: Request):
+    event = {"httpMethod": "GET", "queryStringParameters": dict(request.query_params)}
+    return invocar_lambda("UPC-1931-G01-LAMBDA-17-rankingClientes", event)
+
+@app.get("/api/v1/admin/reportes/vendedores")
+async def reportes_por_vendedor(request: Request):
+    event = {"httpMethod": "GET", "queryStringParameters": dict(request.query_params)}
+    return invocar_lambda("UPC-1931-G01-LAMBDA-18-reportesPorVendedor", event)
+
+@app.get("/api/v1/admin/cotizaciones")
+async def listar_cotizaciones_admin(request: Request):
+    event = {"httpMethod": "GET", "queryStringParameters": dict(request.query_params)}
+    return invocar_lambda("UPC-1931-G01-LAMBDA-19-listarCotizacionesAdmin", event)

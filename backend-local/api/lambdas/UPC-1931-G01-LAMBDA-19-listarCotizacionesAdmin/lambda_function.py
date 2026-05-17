@@ -16,31 +16,29 @@ def lambda_handler(event, context):
         conn = get_db_connection()
         cursor = conn.cursor()
 
-        vendor_id = event.get('queryStringParameters', {}).get('vendor_id')
-        status    = event.get('queryStringParameters', {}).get('status')
+        status = event.get('queryStringParameters', {}).get('status')
 
         query = """
             SELECT q.id, q.code, q.quotation_date, q.subtotal, q.igv, q.total,
-                    q.general_comment, q.sent_at,
+                    q.general_comment,
                     qs.name AS estado,
-                    u.first_name + ' ' + u.last_name AS cliente,
-                    u.email AS correo_cliente,
-                    u.phone AS telefono,
-                    u.empresa AS empresa
+                    uc.first_name + ' ' + uc.last_name AS cliente,
+                    uc.email AS correo_cliente,
+                    uc.phone AS telefono_cliente,
+                    uc.empresa AS empresa_cliente,
+                    uv.first_name + ' ' + uv.last_name AS vendedor,
+                    uv.email AS correo_vendedor
             FROM quotations q
             INNER JOIN quotation_statuses qs ON q.status_id = qs.id
-            INNER JOIN users u ON q.client_user_id = u.id
-            WHERE (q.vendor_user_id = ? OR q.vendor_user_id IS NULL)
+            INNER JOIN users uc ON q.client_user_id = uc.id
+            LEFT JOIN users uv ON q.vendor_user_id = uv.id
         """
-        params = [vendor_id]
 
         if status:
-            query += " AND qs.name = ?"
-            params.append(status)
-
-        query += " ORDER BY q.created_at DESC"
-
-        cursor.execute(query, params)
+            query += " WHERE qs.name = ?"
+            cursor.execute(query + " ORDER BY q.created_at DESC", [status])
+        else:
+            cursor.execute(query + " ORDER BY q.created_at DESC")
 
         cotizaciones = []
         for row in cursor.fetchall():
@@ -55,8 +53,10 @@ def lambda_handler(event, context):
                 "estado":          row.estado,
                 "cliente":         row.cliente,
                 "correo_cliente":  row.correo_cliente,
-                "telefono":        row.telefono or '',
-                "empresa":         row.empresa or ''
+                "telefono_cliente": row.telefono_cliente or '',
+                "empresa_cliente": row.empresa_cliente or '',
+                "vendedor":        row.vendedor or 'Sin asignar',
+                "correo_vendedor": row.correo_vendedor or ''
             })
 
         return {

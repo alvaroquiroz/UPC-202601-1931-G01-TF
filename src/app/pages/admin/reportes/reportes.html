@@ -15,6 +15,9 @@
       <a routerLink="/admin/usuarios" class="btn btn-light-ui btn-sm">
         <i class="bi bi-people"></i> Usuarios
       </a>
+      <a routerLink="/admin/catalogo" class="btn btn-light-ui btn-sm">
+        <i class="bi bi-box-seam"></i> Catálogo
+      </a>
       <a (click)="logout($event)" class="btn btn-light-ui btn-sm" style="cursor:pointer;">
         <i class="bi bi-box-arrow-right"></i> Salir
       </a>
@@ -32,17 +35,42 @@
 
   <!-- TARJETAS RESUMEN -->
   <div class="row g-3 mb-4">
-    @for(item of resumen; track item.label){
-      <div class="col-md-3">
+    <div class="col-md-3">
         <div class="metric-card">
-          <div class="d-flex justify-content-between align-items-start">
-            <span class="metric-title">{{ item.label }}</span>
-            <i class="bi {{ item.icono }} metric-icon"></i>
-          </div>
-          <div class="metric-value">{{ item.valor }}</div>
+            <div class="d-flex justify-content-between align-items-start">
+                <span class="metric-title">Total Cotizaciones</span>
+                <i class="bi bi-file-earmark-text metric-icon"></i>
+            </div>
+            <div class="metric-value">{{ totalCotizaciones() }}</div>
         </div>
-      </div>
-    }
+    </div>
+    <div class="col-md-3">
+        <div class="metric-card">
+            <div class="d-flex justify-content-between align-items-start">
+                <span class="metric-title">Monto Total</span>
+                <i class="bi bi-cash-stack metric-icon"></i>
+            </div>
+            <div class="metric-value">S/. {{ montoTotal() | number:'1.0-0' }}</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="metric-card">
+            <div class="d-flex justify-content-between align-items-start">
+                <span class="metric-title">Tasa de Aprobación</span>
+                <i class="bi bi-check-circle metric-icon"></i>
+            </div>
+            <div class="metric-value success">{{ tasaAprobacion() }}</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="metric-card">
+            <div class="d-flex justify-content-between align-items-start">
+                <span class="metric-title">Promedio por Cot.</span>
+                <i class="bi bi-graph-up metric-icon"></i>
+            </div>
+            <div class="metric-value">{{ promedioPorCot() }}</div>
+        </div>
+    </div>
   </div>
 
   <!-- GRÁFICA BARRAS + DONA -->
@@ -97,13 +125,13 @@
           </tr>
         </thead>
         <tbody>
-          @for(c of topClientes; track c.nombre; let i = $index){
+          @for(c of topClientes(); track c.cliente; let i = $index){
             <tr>
-              <td class="muted">{{ i + 1 }}</td>
-              <td class="fw-bold">{{ c.nombre }}</td>
-              <td class="muted">{{ c.empresa }}</td>
-              <td>{{ c.cotizaciones }}</td>
-              <td><strong>{{ c.total }}</strong></td>
+                <td class="muted">{{ i + 1 }}</td>
+                <td class="fw-bold">{{ c.cliente }}</td>
+                <td class="muted">{{ c.empresa }}</td>
+                <td>{{ c.total_cotizaciones }}</td>
+                <td><strong>S/. {{ c.monto_total | number:'1.0-2' }}</strong></td>
             </tr>
           }
         </tbody>
