@@ -3,6 +3,8 @@ import os
 import json
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from typing import Optional
 
 app = FastAPI(title="API Gateway Simulado - Módulo Cliente")
 
@@ -14,6 +16,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+class VendedorActionBody(BaseModel):
+    user_id: int
+    comment: Optional[str] = None
 
 def invocar_lambda(nombre_carpeta: str, event: dict):
     ruta_script = os.path.join(os.path.dirname(__file__), "lambdas", nombre_carpeta, "lambda_function.py")
@@ -45,3 +51,45 @@ async def crear_cotizacion(request: Request):
     body_bytes = await request.body()
     event = {"httpMethod": "POST", "body": body_bytes.decode('utf-8')}
     return invocar_lambda("UPC-1931-G01-LAMBDA-07-crearCotizacion", event)
+
+@app.get("/api/v1/vendedor/cotizaciones")
+async def listar_cotizaciones_vendedor(request: Request):
+    event = {"httpMethod": "GET", "queryStringParameters": dict(request.query_params)}
+    return invocar_lambda("UPC-1931-G01-LAMBDA-08-listarCotizacionesVendedor", event)
+
+@app.get("/api/v1/vendedor/cotizaciones/{id}")
+async def obtener_detalle_cotizacion_vendedor(id: str, request: Request):
+    event = {"httpMethod": "GET", "pathParameters": {"id": id}}
+    return invocar_lambda("UPC-1931-G01-LAMBDA-09-obtenerDetalleCotizacionVendedor", event)
+
+@app.put("/api/v1/vendedor/cotizaciones/{id}/aprobar")
+async def aprobar_cotizacion(id: str, body: VendedorActionBody):
+    event = {
+        "httpMethod": "PUT",
+        "pathParameters": {"id": id},
+        "body": body.model_dump_json()
+    }
+    return invocar_lambda("UPC-1931-G01-LAMBDA-10-aprobarCotizacion", event)
+
+@app.put("/api/v1/vendedor/cotizaciones/{id}/observar")
+async def observar_cotizacion(id: str, body: VendedorActionBody):
+    event = {
+        "httpMethod": "PUT",
+        "pathParameters": {"id": id},
+        "body": body.model_dump_json()
+    }
+    return invocar_lambda("UPC-1931-G01-LAMBDA-11-observarCotizacion", event)
+
+@app.put("/api/v1/vendedor/cotizaciones/{id}/rechazar")
+async def rechazar_cotizacion(id: str, body: VendedorActionBody):
+    event = {
+        "httpMethod": "PUT",
+        "pathParameters": {"id": id},
+        "body": body.model_dump_json()
+    }
+    return invocar_lambda("UPC-1931-G01-LAMBDA-12-rechazarCotizacion", event)
+
+@app.get("/api/v1/vendedor/cotizaciones/{id}/historial")
+async def historial_cotizacion(id: str, request: Request):
+    event = {"httpMethod": "GET", "pathParameters": {"id": id}}
+    return invocar_lambda("UPC-1931-G01-LAMBDA-13-historialCotizacion", event)

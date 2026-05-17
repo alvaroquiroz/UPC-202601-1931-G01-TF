@@ -42,6 +42,7 @@ CREATE TABLE users (
     email      NVARCHAR(150) NOT NULL UNIQUE,
     password   NVARCHAR(255) NOT NULL,
     phone      NVARCHAR(20)  NULL,
+    empresa    NVARCHAR(100) NULL,
     status     NVARCHAR(20)  NOT NULL DEFAULT 'activo' CHECK (status IN ('activo', 'inactivo')),
     created_at DATETIME      DEFAULT GETDATE(),
     updated_at DATETIME      DEFAULT GETDATE(),
@@ -143,24 +144,27 @@ INSERT INTO roles (name, description) VALUES
 INSERT INTO quotation_statuses (name, description) VALUES
 ('Borrador', 'En borrador'), ('Pendiente', 'Enviada'), ('Aprobada', 'Aprobada'), ('Observada', 'Con cambios'), ('Rechazada', 'Rechazada');
 
--- 1=Admin, 2=Vendedor, 3=Cliente
-INSERT INTO users (role_id, first_name, last_name, email, password, phone, status) VALUES
-(1, 'Admin', 'Sistema', 'admin@cotizaciones.com', 'hash', NULL, 'activo'),
-(2, 'Carlos', 'Vega', 'vendedor@cotizaciones.com', 'hash', '+51999111222', 'activo'),
-(3, 'Juan', 'Perez', 'cliente@empresa.com', 'hash', '+51999555666', 'activo');
+INSERT INTO users (role_id, first_name, last_name, email, password, phone, empresa, status) VALUES
+(1, 'Admin', 'Sistema', 'admin@cotizaciones.com', 'hash', NULL, NULL, 'activo'),
+(2, 'Carlos', 'Vega', 'carlos@cotizaciones.com', 'hash', '+51999111222', NULL, 'activo'),
+(3, 'Juan', 'Perez', 'cliente@empresa.com', 'hash', '+51999555666', 'Tech SAC', 'activo');
 
 INSERT INTO products (code, name, description, unit_price, stock, status) VALUES
 ('PROD-001', 'Laptop Dell XPS 15', 'Laptop 15 pulgadas', 4500.00, 10, 'activo'),
 ('PROD-002', 'Monitor LG 27"', 'Monitor 4K', 1200.00, 15, 'activo'),
-('PROD-003', 'Teclado Mecanico', 'Teclado RGB', 350.00, 20, 'activo'),
-('PROD-004', 'Mouse Inalambrico', 'Mouse ergonomico', 180.00, 25, 'activo'),
-('PROD-005', 'Auriculares Sony', 'Noise cancelling', 650.00, 12, 'activo');
+('PROD-003', 'Teclado Mecanico', 'Teclado RGB', 350.00, 20, 'activo');
 
 INSERT INTO quotations (code, client_user_id, vendor_user_id, status_id, quotation_date, subtotal, igv, total, general_comment) VALUES
-('COT-3-1715891234', 3, 2, 2, '2026-04-20', 1200.00, 216.00, 1416.00, 'Entrega urgente'),
-('COT-3-1715891334', 3, 2, 3, '2026-04-18', 4500.00, 810.00, 5310.00, '');
+('COT-001', 3, 2, 2, CAST(GETDATE() AS DATE), 1200.00, 216.00, 1416.00, 'Entrega urgente'),
+('COT-002', 3, 2, 3, CAST(GETDATE() AS DATE), 3750.00, 675.00, 4425.00, NULL),
+('COT-003', 3, 2, 4, CAST(GETDATE() AS DATE), 890.00, 160.20, 1050.20, 'Verificar stock'),
+('COT-004', 3, 2, 2, CAST(GETDATE() AS DATE), 500.00, 90.00, 590.00, 'Para prueba de observar'),
+('COT-005', 3, 2, 2, CAST(GETDATE() AS DATE), 800.00, 144.00, 944.00, 'Para prueba de rechazar');
 
 INSERT INTO quotation_items (quotation_id, product_id, quantity, unit_price, line_subtotal, line_igv, line_total) VALUES
-(1, 2, 1, 1200.00, 1200.00, 216.00, 1416.00),
-(2, 1, 1, 4500.00, 4500.00, 810.00, 5310.00);
+(1, 1, 1, 4500.00, 4500.00, 810.00, 5310.00),
+(2, 2, 2, 1200.00, 2400.00, 432.00, 2832.00),
+(3, 3, 1, 350.00, 350.00, 63.00, 413.00),
+(4, 1, 1, 4500.00, 4500.00, 810.00, 5310.00),
+(5, 2, 1, 1200.00, 1200.00, 216.00, 1416.00);
 GO

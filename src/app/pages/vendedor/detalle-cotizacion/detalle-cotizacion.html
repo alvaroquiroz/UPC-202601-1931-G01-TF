@@ -64,7 +64,7 @@
                                 <td class="fw-bold">{{ p.producto }}</td>
                                 <td>{{ p.quantity }}</td>
                                 <td>S/. {{ p.unit_price.toFixed(2) }}</td>
-                                <td><strong>S/. {{ p.line_subtotal.toFixed(2) }}</strong></td>
+                                <td><strong>S/. {{ (p.line_subtotal || 0).toFixed(2) }}</strong></td>
                             </tr>
                         }
                     </tbody>
