@@ -30,13 +30,13 @@ def lambda_handler(event, context):
         WHERE c.client_user_id = ?
         ORDER BY c.created_at DESC
         """
-        cursor.execute(query, (cliente_id,))
+        cursor.execute(query, (int(cliente_id),))
         
         cotizaciones = []
         for row in cursor.fetchall():
             cotizaciones.append({
-                "id": row.code,
-                "db_id": row.id,
+                "id": row.id,
+                "code": row.code,
                 "fecha": row.quotation_date.strftime('%Y-%m-%d'),
                 "total": f"S/. {float(row.total):.2f}",
                 "estado": row.estado,
