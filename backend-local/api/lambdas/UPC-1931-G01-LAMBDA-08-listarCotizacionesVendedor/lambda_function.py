@@ -25,7 +25,8 @@ def lambda_handler(event, context):
                     qs.name AS estado,
                     u.first_name + ' ' + u.last_name AS cliente,
                     u.email AS correo_cliente,
-                    u.phone AS telefono
+                    u.phone AS telefono,
+                    u.empresa AS empresa
             FROM quotations q
             INNER JOIN quotation_statuses qs ON q.status_id = qs.id
             INNER JOIN users u ON q.client_user_id = u.id
@@ -54,7 +55,8 @@ def lambda_handler(event, context):
                 "estado":          row.estado,
                 "cliente":         row.cliente,
                 "correo_cliente":  row.correo_cliente,
-                "telefono":        row.telefono or ''
+                "telefono":        row.telefono or '',
+                "empresa":         row.empresa or ''
             })
 
         return {

@@ -24,7 +24,7 @@ def lambda_handler(event, context):
 
         query = """
         SELECT c.id, c.code, c.quotation_date, c.total, s.name as estado,
-               (SELECT COUNT(*) FROM quotation_items WHERE quotation_id = c.id) as total_productos
+                (SELECT COUNT(*) FROM quotation_items WHERE quotation_id = c.id) as total_productos
         FROM quotations c
         JOIN quotation_statuses s ON c.status_id = s.id
         WHERE c.client_user_id = ?

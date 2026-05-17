@@ -145,26 +145,45 @@ INSERT INTO quotation_statuses (name, description) VALUES
 ('Borrador', 'En borrador'), ('Pendiente', 'Enviada'), ('Aprobada', 'Aprobada'), ('Observada', 'Con cambios'), ('Rechazada', 'Rechazada');
 
 INSERT INTO users (role_id, first_name, last_name, email, password, phone, empresa, status) VALUES
-(1, 'Admin', 'Sistema', 'admin@cotizaciones.com', 'hash', NULL, NULL, 'activo'),
-(2, 'Carlos', 'Vega', 'carlos@cotizaciones.com', 'hash', '+51999111222', NULL, 'activo'),
-(3, 'Juan', 'Perez', 'cliente@empresa.com', 'hash', '+51999555666', 'Tech SAC', 'activo');
+(1, 'Admin',  'Sistema', 'admin@cotizaciones.com',  '$2b$10$hashadmin',     NULL,           NULL,          'activo'),
+(2, 'Carlos', 'Vega',    'carlos@cotizaciones.com', '$2b$10$hashvendedor1', '+51999111222',  NULL,          'activo'),
+(2, 'Ana',    'Rios',    'ana@cotizaciones.com',    '$2b$10$hashvendedor2', '+51999333444',  NULL,          'activo'),
+(3, 'Juan',   'Perez',   'juan@tech.com',           '$2b$10$hashcliente1', '+51999555666',  'Tech SAC',    'activo'),
+(3, 'Maria',  'Lopez',   'maria@sol.com',           '$2b$10$hashcliente2', '+51999777888',  'Sol SRL',     'activo'),
+(3, 'Carlos', 'Ruiz',    'carlos@gn.com',           '$2b$10$hashcliente3', '+51999999000',  'Grupo Norte', 'activo');
 
 INSERT INTO products (code, name, description, unit_price, stock, status) VALUES
-('PROD-001', 'Laptop Dell XPS 15', 'Laptop 15 pulgadas', 4500.00, 10, 'activo'),
-('PROD-002', 'Monitor LG 27"', 'Monitor 4K', 1200.00, 15, 'activo'),
-('PROD-003', 'Teclado Mecanico', 'Teclado RGB', 350.00, 20, 'activo');
+('PROD-001', 'Laptop Dell XPS 15',  'Laptop profesional 15 pulgadas', 4500.00, 10, 'activo'),
+('PROD-002', 'Monitor LG 27"',      'Monitor 4K IPS',                 1200.00, 15, 'activo'),
+('PROD-003', 'Teclado Mecanico',    'Teclado mecanico RGB',            350.00,  20, 'activo'),
+('PROD-004', 'Mouse Inalambrico',   'Mouse ergonomico inalambrico',    180.00,  25, 'activo'),
+('PROD-005', 'Auriculares Sony',    'Auriculares noise cancelling',    650.00,  12, 'activo'),
+('PROD-006', 'Webcam Logitech',     'Webcam 4K videoconferencias',     420.00,  18, 'activo');
 
 INSERT INTO quotations (code, client_user_id, vendor_user_id, status_id, quotation_date, subtotal, igv, total, general_comment) VALUES
-('COT-001', 3, 2, 2, CAST(GETDATE() AS DATE), 1200.00, 216.00, 1416.00, 'Entrega urgente'),
-('COT-002', 3, 2, 3, CAST(GETDATE() AS DATE), 3750.00, 675.00, 4425.00, NULL),
-('COT-003', 3, 2, 4, CAST(GETDATE() AS DATE), 890.00, 160.20, 1050.20, 'Verificar stock'),
-('COT-004', 3, 2, 2, CAST(GETDATE() AS DATE), 500.00, 90.00, 590.00, 'Para prueba de observar'),
-('COT-005', 3, 2, 2, CAST(GETDATE() AS DATE), 800.00, 144.00, 944.00, 'Para prueba de rechazar');
+('COT-001', 4, 2, 2, CAST(GETDATE() AS DATE), 1200.00,  216.00,  1416.00, 'Entrega urgente para el lunes'),
+('COT-002', 5, 2, 3, CAST(GETDATE() AS DATE), 3750.00,  675.00,  4425.00, NULL),
+('COT-003', 6, 2, 4, CAST(GETDATE() AS DATE),  890.00,  160.20,  1050.20, 'Verificar stock del monitor'),
+('COT-004', 4, 2, 3, CAST(GETDATE() AS DATE), 6200.00, 1116.00,  7316.00, NULL),
+('COT-005', 5, 2, 5, CAST(GETDATE() AS DATE),  450.00,   81.00,   531.00, 'Cliente no disponible');
 
 INSERT INTO quotation_items (quotation_id, product_id, quantity, unit_price, line_subtotal, line_igv, line_total) VALUES
-(1, 1, 1, 4500.00, 4500.00, 810.00, 5310.00),
-(2, 2, 2, 1200.00, 2400.00, 432.00, 2832.00),
-(3, 3, 1, 350.00, 350.00, 63.00, 413.00),
+(1, 4, 2, 180.00,  360.00,   64.80,  424.80),
+(1, 3, 1, 350.00,  350.00,   63.00,  413.00),
+(1, 5, 1, 650.00,  650.00,  117.00,  767.00),
+(2, 1, 1, 4500.00, 4500.00, 810.00, 5310.00),
+(3, 2, 1, 1200.00, 1200.00, 216.00, 1416.00),
 (4, 1, 1, 4500.00, 4500.00, 810.00, 5310.00),
-(5, 2, 1, 1200.00, 1200.00, 216.00, 1416.00);
+(4, 2, 1, 1200.00, 1200.00, 216.00, 1416.00),
+(5, 4, 1,  180.00,  180.00,  32.40,  212.40);
+
+INSERT INTO quotation_status_history (quotation_id, previous_status_id, new_status_id, changed_by_user_id, comment) VALUES
+(2, 2, 3, 2, 'Todo correcto, aprobado'),
+(3, 2, 4, 3, 'Verificar disponibilidad del monitor'),
+(4, 2, 3, 3, 'Aprobado sin observaciones'),
+(5, 2, 5, 2, 'Cliente no responde');
+
+INSERT INTO quotation_observations (quotation_id, user_id, comment) VALUES
+(3, 3, 'Verificar disponibilidad del monitor antes de aprobar'),
+(5, 2, 'Cliente no responde a las llamadas');
 GO

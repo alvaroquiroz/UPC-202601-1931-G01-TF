@@ -23,30 +23,28 @@ class VendedorActionBody(BaseModel):
 
 def invocar_lambda(nombre_carpeta: str, event: dict):
     ruta_script = os.path.join(os.path.dirname(__file__), "lambdas", nombre_carpeta, "lambda_function.py")
-    
     spec = importlib.util.spec_from_file_location("lambda_module", ruta_script)
     modulo = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(modulo)
-    
     respuesta = modulo.lambda_handler(event, {})
     return json.loads(respuesta['body'])
 
-@app.get("/productos")
+@app.get("/api/v1/productos")
 async def listar_productos(request: Request):
     event = {"httpMethod": "GET", "queryStringParameters": dict(request.query_params)}
     return invocar_lambda("UPC-1931-G01-LAMBDA-04-listarProductos", event)
 
-@app.get("/cotizaciones")
+@app.get("/api/v1/cotizaciones")
 async def listar_cotizaciones(request: Request):
     event = {"httpMethod": "GET", "queryStringParameters": dict(request.query_params)}
     return invocar_lambda("UPC-1931-G01-LAMBDA-05-listarCotizaciones", event)
 
-@app.get("/cotizaciones/{id}")
+@app.get("/api/v1/cotizaciones/{id}")
 async def obtener_detalle_cotizacion(id: str, request: Request):
     event = {"httpMethod": "GET", "pathParameters": {"id": id}}
     return invocar_lambda("UPC-1931-G01-LAMBDA-06-obtenerDetalleCotizacion", event)
 
-@app.post("/cotizaciones")
+@app.post("/api/v1/cotizaciones")
 async def crear_cotizacion(request: Request):
     body_bytes = await request.body()
     event = {"httpMethod": "POST", "body": body_bytes.decode('utf-8')}
