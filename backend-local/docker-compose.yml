@@ -1,28 +1,30 @@
-version: '3.8'
-
 services:
   db:
-    image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: sql_server_local
-    environment:
-      - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=SuperPassword123!
+    build:
+      context: .
+      dockerfile: db.Dockerfile
     ports:
       - "1433:1433"
-    volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "SuperPassword123!"
 
   api:
-    build: ./api
     container_name: python_api_local
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    restart: on-failure
     ports:
       - "8000:8000"
-    depends_on:
-      - db
-    environment:
-      - DB_SERVER=db
-      - DB_USER=sa
-      - DB_PASSWORD=SuperPassword123!
-      - DB_NAME=db_cotizaciones
     volumes:
       - ./api:/app
+    environment:
+      - DB_SERVER=db
+      - DB_NAME=db_cotizaciones
+      - DB_USER=admin
+      - DB_PASSWORD=SuperPassword123!
+      - MSSQL_SA_PASSWORD=SuperPassword123!
+    depends_on:
+      - db
