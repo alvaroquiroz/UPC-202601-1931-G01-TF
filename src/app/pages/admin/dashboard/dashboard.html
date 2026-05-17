@@ -15,6 +15,9 @@
             <a routerLink="/admin/reportes" class="btn btn-light-ui btn-sm">
                 <i class="bi bi-bar-chart"></i> Reportes
             </a>
+            <a routerLink="/admin/catalogo" class="btn btn-light-ui btn-sm">
+                <i class="bi bi-box-seam"></i> Catálogo
+            </a>
             <div class="user-chip">
                 <div class="avatar">AD</div>
                 <div>
@@ -37,9 +40,9 @@
         <p class="page-subtitle">Resumen general del sistema · Abril 2026</p>
     </div>
 
-<!-- TARJETAS -->
+    <!-- TARJETAS -->
     <div class="row g-3 mb-4">
-        <div class="col-md-3">
+        <div class="col">
             <div class="metric-card">
                 <div class="d-flex justify-content-between align-items-start">
                     <span class="metric-title">Total Cotizaciones</span>
@@ -49,7 +52,7 @@
                 <div class="metric-meta">Todas las solicitudes</div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col">
             <div class="metric-card">
                 <div class="d-flex justify-content-between align-items-start">
                     <span class="metric-title">Aprobadas</span>
@@ -59,7 +62,7 @@
                 <div class="metric-meta">Confirmadas este mes</div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col">
             <div class="metric-card">
                 <div class="d-flex justify-content-between align-items-start">
                     <span class="metric-title">Pendientes</span>
@@ -69,7 +72,7 @@
                 <div class="metric-meta">Por revisar</div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col">
             <div class="metric-card">
                 <div class="d-flex justify-content-between align-items-start">
                     <span class="metric-title">Rechazadas</span>
@@ -79,9 +82,19 @@
                     <div class="metric-meta">No aprobadas</div>
             </div>
         </div>
+        <div class="col">
+            <div class="metric-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <span class="metric-title">Observadas</span>
+                    <i class="bi bi-exclamation-circle metric-icon"></i>
+                </div>
+                <div class="metric-value">{{ observadas }}</div>
+                <div class="metric-meta">Requieren cambios</div>
+            </div>
+        </div>
     </div>
 
-<!-- GRÁFICAS -->
+    <!-- GRÁFICAS -->
     <div class="row g-4 mb-4">
         <div class="col-lg-8">
             <div class="card-ui section-card">
@@ -128,29 +141,29 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @for(cot of cotizaciones; track cot.id){
+                    @for(cot of cotizaciones(); track cot.id){
                         <tr>
-                            <td class="quote-code">{{ cot.id }}</td>
+                            <td class="quote-code">{{ cot.code }}</td>
                             <td class="fw-bold">{{ cot.cliente }}</td>
-                            <td class="muted">{{ cot.fecha }}</td>
+                            <td class="muted">{{ cot.quotation_date }}</td>
                             <td><strong>{{ cot.total }}</strong></td>
                             <td>
                                 @if(cot.estado === 'Pendiente'){
-                                <span class="badge-ui badge-sent">{{ cot.estado }}</span>
+                                    <span class="badge-ui badge-sent">{{ cot.estado }}</span>
                                 }
                                 @if(cot.estado === 'Aprobada'){
-                                <span class="badge-ui badge-accepted">{{ cot.estado }}</span>
+                                    <span class="badge-ui badge-accepted">{{ cot.estado }}</span>
                                 }
                                 @if(cot.estado === 'Observada'){
-                                <span class="badge-ui badge-draft">{{ cot.estado }}</span>
+                                    <span class="badge-ui badge-draft">{{ cot.estado }}</span>
                                 }
                                 @if(cot.estado === 'Rechazada'){
-                                <span class="badge-ui badge-rejected">{{ cot.estado }}</span>
+                                    <span class="badge-ui badge-rejected">{{ cot.estado }}</span>
                                 }
                             </td>
                             <td>
-                                <a routerLink="/admin/detalle-cotizacion" class="action-link">
-                                <i class="bi bi-eye"></i> Ver
+                                <a [routerLink]="['/admin/detalle-cotizacion', cot.id]" class="action-link">
+                                    <i class="bi bi-eye"></i> Ver
                                 </a>
                             </td>
                         </tr>

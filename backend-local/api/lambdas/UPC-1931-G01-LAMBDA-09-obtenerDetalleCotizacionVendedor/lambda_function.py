@@ -21,13 +21,16 @@ def lambda_handler(event, context):
             SELECT q.id, q.code, q.quotation_date, q.subtotal, q.igv, q.total,
                     q.general_comment, q.sent_at, q.reviewed_at,
                     qs.name AS estado,
-                    u.first_name + ' ' + u.last_name AS cliente,
-                    u.email AS correo_cliente,
-                    u.phone AS telefono,
-                    u.empresa AS empresa
+                    uc.first_name + ' ' + uc.last_name AS cliente,
+                    uc.email AS correo_cliente,
+                    uc.phone AS telefono,
+                    uc.empresa AS empresa,
+                    uv.first_name + ' ' + uv.last_name AS vendedor,
+                    uv.email AS correo_vendedor
             FROM quotations q
             INNER JOIN quotation_statuses qs ON q.status_id = qs.id
-            INNER JOIN users u ON q.client_user_id = u.id
+            INNER JOIN users uc ON q.client_user_id = uc.id
+            LEFT JOIN users uv ON q.vendor_user_id = uv.id
             WHERE q.id = ?
         """, [id])
 
@@ -47,7 +50,9 @@ def lambda_handler(event, context):
             "cliente":         row.cliente,
             "correo_cliente":  row.correo_cliente,
             "telefono":        row.telefono or '',
-            "empresa":         row.empresa or ''
+            "empresa":         row.empresa or '',
+            "vendedor":        row.vendedor or 'Sin asignar',
+            "correo_vendedor": row.correo_vendedor or ''
         }
 
         cursor.execute("""

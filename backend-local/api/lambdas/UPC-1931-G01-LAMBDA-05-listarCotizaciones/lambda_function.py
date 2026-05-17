@@ -24,19 +24,19 @@ def lambda_handler(event, context):
 
         query = """
         SELECT c.id, c.code, c.quotation_date, c.total, s.name as estado,
-               (SELECT COUNT(*) FROM quotation_items WHERE quotation_id = c.id) as total_productos
+                (SELECT COUNT(*) FROM quotation_items WHERE quotation_id = c.id) as total_productos
         FROM quotations c
         JOIN quotation_statuses s ON c.status_id = s.id
         WHERE c.client_user_id = ?
         ORDER BY c.created_at DESC
         """
-        cursor.execute(query, (cliente_id,))
+        cursor.execute(query, (int(cliente_id),))
         
         cotizaciones = []
         for row in cursor.fetchall():
             cotizaciones.append({
-                "id": row.code,
-                "db_id": row.id,
+                "id": row.id,
+                "code": row.code,
                 "fecha": row.quotation_date.strftime('%Y-%m-%d'),
                 "total": f"S/. {float(row.total):.2f}",
                 "estado": row.estado,

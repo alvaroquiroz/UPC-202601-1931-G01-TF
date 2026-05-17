@@ -13,9 +13,12 @@ export class MisCotizaciones implements OnInit {
   private cotizacionesService = inject(CotizacionesService);
   
   cotizaciones = signal<any[]>([]);
+  usuarioActual: any = {};
 
   async ngOnInit() {
-    const clienteId = 3;
+    this.usuarioActual = JSON.parse(localStorage.getItem('access_token') || '{}');
+    const clienteId = this.usuarioActual?.id || 4;
+    
     try {
       const data = await this.cotizacionesService.getCotizacionesCliente(clienteId);
       this.cotizaciones.set(data);
