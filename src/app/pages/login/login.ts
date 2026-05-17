@@ -77,10 +77,18 @@ export class Login implements OnInit {
 
   if (email === 'cliente@empresa.com' && password === 'cliente123') {
     localStorage.setItem('access_token', JSON.stringify({
-      id: 3, 
+      id: 4, 
       email,
       role: 'cliente',
       name: 'Juan Perez'
+    }));
+    this.router.navigate(['/cliente/dashboard']);
+    return;
+  }
+
+  if (email === 'maria@sol.com' && password === 'cliente123') {
+    localStorage.setItem('access_token', JSON.stringify({
+      id: 5, email, role: 'cliente', name: 'María López'
     }));
     this.router.navigate(['/cliente/dashboard']);
     return;
