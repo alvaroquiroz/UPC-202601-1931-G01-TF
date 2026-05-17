@@ -59,6 +59,9 @@
                                 @if(cotizacionForm.get('correo')?.errors?.["required"] && cotizacionForm.get('correo')?.touched){
                                     <small class="form-text text-danger">El correo es requerido</small>
                                 }
+                                @if(cotizacionForm.get('correo')?.errors?.["email"] && cotizacionForm.get('correo')?.touched){
+                                    <small class="form-text text-danger">Ingresa un correo válido</small>
+                                }
                             </div>
                         </div>
                         <div class="col-md-6">

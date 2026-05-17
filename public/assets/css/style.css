@@ -710,3 +710,13 @@ label.form-label { font-weight: 700; }
   .table-ui { min-width: 760px; }
   .product-card { min-height: auto; }
 }
+
+.table-ui th:first-child,
+.table-ui td:first-child {
+  padding-left: 1.5rem;
+}
+
+.table-ui th:last-child,
+.table-ui td:last-child {
+  padding-right: 1.5rem;
+}
