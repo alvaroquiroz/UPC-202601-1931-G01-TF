@@ -21,7 +21,7 @@ export class DetalleCotizacion implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       try {
-        const response = await this.cotService.getCotizacion(id);
+        const response = await this.cotService.getCotizacionCliente(id);
         const dataUnwrapped = response.data ? response.data : response;
         
         this.cotizacion.set(dataUnwrapped);

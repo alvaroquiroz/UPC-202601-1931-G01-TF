@@ -35,7 +35,7 @@
     </div>
 
     <div class="row g-3 mb-4">
-        <div class="col-md-3">
+        <div class="col">
             <div class="metric-card">
                 <div class="d-flex justify-content-between align-items-start">
                     <span class="metric-title">Total Cotizaciones</span>
@@ -45,7 +45,7 @@
                 <div class="metric-meta">Todas tus solicitudes</div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col">
             <div class="metric-card">
                 <div class="d-flex justify-content-between align-items-start">
                     <span class="metric-title">Pendientes</span>
@@ -55,7 +55,7 @@
                 <div class="metric-meta">En revisión del vendedor</div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col">
             <div class="metric-card">
                 <div class="d-flex justify-content-between align-items-start">
                     <span class="metric-title">Aprobadas</span>
@@ -65,7 +65,7 @@
                 <div class="metric-meta">Listas para confirmar</div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col">
             <div class="metric-card">
                 <div class="d-flex justify-content-between align-items-start">
                     <span class="metric-title">Observadas</span>
@@ -73,6 +73,16 @@
                 </div>
                 <div class="metric-value">{{ observadas }}</div>
                 <div class="metric-meta">Requieren corrección</div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="metric-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <span class="metric-title">Rechazadas</span>
+                    <i class="bi bi-x-circle metric-icon"></i>
+                </div>
+                <div class="metric-value">{{ rechazadas }}</div>
+                <div class="metric-meta">No aprobadas</div>
             </div>
         </div>
     </div>
@@ -128,5 +138,4 @@
             </table>
         </div>
     </div>
-
 </div>

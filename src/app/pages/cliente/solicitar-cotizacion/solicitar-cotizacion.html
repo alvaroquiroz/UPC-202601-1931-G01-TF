@@ -32,11 +32,11 @@
                 @for(producto of productos(); track producto.id){
                     <div class="col-md-6">
                         <div class="product-card">
-                            <div class="product-title">{{ producto.nombre }}</div>
-                            <div class="product-desc">{{ producto.descripcion }}</div>
+                            <div class="product-title">{{ producto.name }}</div>
+                            <div class="product-desc">{{ producto.description }}</div>
                             <div class="d-flex justify-content-between align-items-center mt-3">
                                 <div class="product-price">
-                                    <small>S/.</small> {{ producto.precio.toFixed(2) }}
+                                    <small>S/.</small> {{ producto.unit_price.toFixed(2) }}
                                 </div>
                                 <button (click)="agregarProducto(producto)" class="btn btn-dark btn-sm">
                                     <i class="bi bi-plus-lg"></i> Agregar
@@ -81,8 +81,9 @@
                             <span class="fw-bold">S/. {{ (item.precio * item.cantidad).toFixed(2) }}</span>
                         </div>
                     </div>
-                    }
+                }
 
+                @if(carrito.length > 0){
                     <div class="summary-total mt-3">
                         <span class="fw-bold">Total</span>
                         <strong>S/. {{ total }}</strong>
@@ -98,8 +99,9 @@
                     <button (click)="_submit()" class="btn btn-dark w-100 mt-3" type="button">
                         <i class="bi bi-send"></i> Enviar Cotización
                     </button>
+                }
 
-                </div>
             </div>
+        </div>
     </div>
 </div>
