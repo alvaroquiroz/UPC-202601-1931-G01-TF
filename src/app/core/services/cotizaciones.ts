@@ -14,6 +14,10 @@ export class CotizacionesService {
     return this.api.get(`/cotizaciones?clienteId=${clienteId}`);
   }
 
+  async getCotizacionCliente(id: string | number): Promise<any> {
+    return this.api.get(`/cotizaciones/${id}`);
+  }
+
   async crearCotizacion(payload: any) {
     return this.api.post('/cotizaciones', payload);
   }
