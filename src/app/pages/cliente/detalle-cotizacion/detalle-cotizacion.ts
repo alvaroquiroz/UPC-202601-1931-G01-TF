@@ -14,8 +14,10 @@ export class DetalleCotizacion implements OnInit {
   private cotService = inject(CotizacionesService);
   
   cotizacion = signal<any>(null);
+  usuarioActual: any = {};
 
   async ngOnInit() {
+    this.usuarioActual = JSON.parse(localStorage.getItem('access_token') || '{}');
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       try {

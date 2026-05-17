@@ -13,9 +13,12 @@ export class Dashboard implements OnInit {
   private cotizacionesService = inject(CotizacionesService);
 
   cotizaciones = signal<any[]>([]);
+  usuarioActual: any = {};
 
   async ngOnInit() {
-    const clienteId = 3; 
+    this.usuarioActual = JSON.parse(localStorage.getItem('access_token') || '{}');
+    const clienteId = this.usuarioActual?.id || 4;
+    
     try {
       const data = await this.cotizacionesService.getCotizacionesCliente(clienteId);
       this.cotizaciones.set(data);
@@ -29,19 +32,19 @@ export class Dashboard implements OnInit {
   }
   
   get pendientes(){ 
-    return this.cotizaciones().filter(c => c.estado === 'Pendiente').length; 
+    return this.cotizaciones().filter(c => (c.estado || c.status) === 'Pendiente').length; 
   }
   
   get aprobadas() { 
-    return this.cotizaciones().filter(c => c.estado === 'Aprobada').length; 
+    return this.cotizaciones().filter(c => (c.estado || c.status) === 'Aprobada').length; 
   }
   
   get observadas(){ 
-    return this.cotizaciones().filter(c => c.estado === 'Observada').length; 
+    return this.cotizaciones().filter(c => (c.estado || c.status) === 'Observada').length; 
   }
   
   get rechazadas(){ 
-    return this.cotizaciones().filter(c => c.estado === 'Rechazada').length; 
+    return this.cotizaciones().filter(c => (c.estado || c.status) === 'Rechazada').length; 
   }
 
   logout(event: Event): void{

@@ -20,6 +20,7 @@ export class SolicitarCotizacion implements OnInit {
   cotizacionForm: FormGroup;
   productos = signal<Producto[]>([]);
   carrito: { id: number, nombre: string, precio: number, cantidad: number }[] = [];
+  usuarioActual: any = {}; // Variable para renderizar datos en el HTML
 
   constructor(){
     this.cotizacionForm = this.fb.group({
@@ -28,9 +29,18 @@ export class SolicitarCotizacion implements OnInit {
   }
   
   async ngOnInit() {
+    this.usuarioActual = JSON.parse(localStorage.getItem('access_token') || '{}');
+
     try {
       const data = await this.productosService.getProductos();
-      this.productos.set(data);
+      const productosMapeados = data.map((item: any) => ({
+        ...item,
+        nombre: item.name,
+        descripcion: item.description,
+        precio: item.unit_price
+      }));
+
+      this.productos.set(productosMapeados);
     } catch (error) {
       console.error("Error al cargar productos desde el contenedor:", error);
     }
@@ -78,7 +88,9 @@ export class SolicitarCotizacion implements OnInit {
     const subtotal = this.carrito.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
     const igv = subtotal * 0.18;
     const total = subtotal + igv;
-    const clienteId = 3; 
+    const user = JSON.parse(localStorage.getItem('access_token') || '{}');
+    const clienteId = user?.id || 4; 
+    
     const payload = {
       clienteId: clienteId,
       observaciones: this.cotizacionForm.value.observaciones,
