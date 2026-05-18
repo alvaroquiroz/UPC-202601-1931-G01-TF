@@ -17,17 +17,6 @@ ALLOWED_ORIGINS = [
 
 DEFAULT_ORIGIN = ALLOWED_ORIGINS[0] if ALLOWED_ORIGINS else "*"
 
-# Lee los orígenes permitidos desde variable de entorno
-# Ejemplo en docker-compose:
-# ALLOWED_ORIGINS=http://localhost:4200,http://127.0.0.1:4200
-ALLOWED_ORIGINS = [
-    origin.strip()
-    for origin in os.environ.get("ALLOWED_ORIGINS", "http://localhost:4200").split(",")
-    if origin.strip()
-]
-
-DEFAULT_ORIGIN = ALLOWED_ORIGINS[0] if ALLOWED_ORIGINS else "*"
-
 app = FastAPI(title="API Gateway Simulado - Módulo Cliente")
 
 # Permite llamadas desde Angular (localhost:4200)
