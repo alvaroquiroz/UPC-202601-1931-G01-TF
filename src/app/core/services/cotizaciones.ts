@@ -25,7 +25,8 @@ export class CotizacionesService {
   // MODULO VENDEDOR
   async getCotizaciones(estado?: string): Promise<Cotizacion[]> {
     const user = JSON.parse(localStorage.getItem('access_token') || '{}');
-    const vendor_id = user?.id || 2;
+    const vendor_id = user?.id;
+    if (!vendor_id) throw new Error('No se pudo identificar al vendedor');
     const query = estado && estado !== 'Todos'
       ? `?vendor_id=${vendor_id}&status=${estado}`
       : `?vendor_id=${vendor_id}`;
