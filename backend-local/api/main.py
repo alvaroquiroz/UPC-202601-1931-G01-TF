@@ -17,6 +17,17 @@ ALLOWED_ORIGINS = [
 
 DEFAULT_ORIGIN = ALLOWED_ORIGINS[0] if ALLOWED_ORIGINS else "*"
 
+# Lee los orígenes permitidos desde variable de entorno
+# Ejemplo en docker-compose:
+# ALLOWED_ORIGINS=http://localhost:4200,http://127.0.0.1:4200
+ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get("ALLOWED_ORIGINS", "http://localhost:4200").split(",")
+    if origin.strip()
+]
+
+DEFAULT_ORIGIN = ALLOWED_ORIGINS[0] if ALLOWED_ORIGINS else "*"
+
 app = FastAPI(title="API Gateway Simulado - Módulo Cliente")
 
 # Permite llamadas desde Angular (localhost:4200)
@@ -45,6 +56,30 @@ async def register(request: Request):
     body_bytes = await request.body()
     event = {"httpMethod": "POST", "body": body_bytes.decode("utf-8")}
     return invocar_lambda("UPC-1931-G01-LAMBDA-02-registrarCliente", event)
+
+@app.post("/api/v1/auth/register")
+async def register(request: Request):
+    body_bytes = await request.body()
+    event = {"httpMethod": "POST", "body": body_bytes.decode("utf-8")}
+    return invocar_lambda("UPC-1931-G01-LAMBDA-02-registrarCliente", event)
+
+@app.post("/api/v1/auth/forgot-password")
+async def forgot_password(request: Request):
+    body_bytes = await request.body()
+    event = {
+        "httpMethod": "POST",
+        "body": body_bytes.decode("utf-8")
+    }
+    return invocar_lambda("UPC-1931-G01-LAMBDA-03-forgotPassword", event)
+
+@app.post("/api/v1/auth/reset-password")
+async def reset_password(request: Request):
+    body_bytes = await request.body()
+    event = {
+        "httpMethod": "POST",
+        "body": body_bytes.decode("utf-8")
+    }
+    return invocar_lambda("UPC-1931-G01-LAMBDA-23-resetPassword", event)
 
 @app.get("/api/v1/productos")
 async def listar_productos(request: Request):

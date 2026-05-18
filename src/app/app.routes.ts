@@ -22,6 +22,7 @@ import { DetalleCotizacion as VendedorDetalle } from './pages/vendedor/detalle-c
 import { NuevaCotizacion } from './pages/vendedor/nueva-cotizacion/nueva-cotizacion';
 import { NuevaCotizacionCliente } from './pages/vendedor/nueva-cotizacion-cliente/nueva-cotizacion-cliente';
 import { Catalogo } from './pages/admin/catalogo/catalogo';
+import { RestablecerPassword } from './pages/restablecer-password/restablecer-password';
 
 
 export const routes: Routes = [
@@ -29,6 +30,7 @@ export const routes: Routes = [
     { path: '', component: Login},
     { path: 'registro', component: Registro},
     { path: 'recuperar-password', component: RecuperarPassword},
+    { path: 'restablecer-password/:token', component: RestablecerPassword },
 
     {
     path: 'admin',
