@@ -28,6 +28,9 @@ def lambda_handler(event, context):
         """, [id])
 
         row = cursor.fetchone()
+        if not row:
+            return {'statusCode': 404, 'body': json.dumps({"error": "Cotización no encontrada"})}
+        
         if row.estado != 'Pendiente':
             return {'statusCode': 400, 'body': json.dumps({"error": "Solo se pueden rechazar cotizaciones en estado Pendiente"})}
 

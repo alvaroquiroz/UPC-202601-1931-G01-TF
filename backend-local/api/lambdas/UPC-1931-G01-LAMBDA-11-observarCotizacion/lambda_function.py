@@ -31,9 +31,12 @@ def lambda_handler(event, context):
         """, [id])
 
         row = cursor.fetchone()
+        if not row:
+            return {'statusCode': 404, 'body': json.dumps({"error": "Cotización no encontrada"})}
+
         if row.estado != 'Pendiente':
             return {'statusCode': 400, 'body': json.dumps({"error": "Solo se pueden observar cotizaciones en estado Pendiente"})}
-
+        
         prev_status_id = row.status_id
 
         cursor.execute("SELECT id FROM quotation_statuses WHERE name = 'Observada'")
