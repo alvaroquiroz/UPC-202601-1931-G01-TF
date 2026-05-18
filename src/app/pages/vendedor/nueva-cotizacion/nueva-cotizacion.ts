@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router, RouterLinkWithHref } from '@angular/router';
 import { ProductosService } from '../../../core/services/productos';
 import { Producto } from '../../../interfaces/producto';
-import { usuariosService } from '../../../core/services/usuarios';
+import { UsuariosService } from '../../../core/services/usuarios';
 import { CotizacionesService } from '../../../core/services/cotizaciones';
 
 @Component({
@@ -19,7 +19,7 @@ export class NuevaCotizacion {
   private productosService = inject(ProductosService);
   private route = inject(ActivatedRoute);
   private cotizacionesService = inject(CotizacionesService);
-  private usuariosService = inject(usuariosService);
+  private usuariosService = inject(UsuariosService);
 
   cotizacionForm: FormGroup = this.fb.group({
     cliente:       ['', [Validators.required]],
@@ -38,20 +38,23 @@ export class NuevaCotizacion {
   total = computed(() => this.subtotal() + this.igv());
 
   async ngOnInit() {
+    const clienteId = this.route.snapshot.queryParamMap.get('clienteId');
+    if (!clienteId) {
+        this.router.navigate(['/vendedor/nueva-cotizacion-cliente']);
+        return;
+    }
+
     const data = await this.productosService.getProductos();
     this.productos.set(data);
 
-    const clienteId = this.route.snapshot.queryParamMap.get('clienteId');
-    if (clienteId) {
-      const usuarios = await this.usuariosService.getUsuarios();
-      const cliente = usuarios.find((u: any) => u.id === Number(clienteId));
-      if (cliente) {
+    const usuarios = await this.usuariosService.getUsuarios();
+    const cliente = usuarios.find((u: any) => u.id === Number(clienteId));
+    if (cliente) {
         this.cotizacionForm.patchValue({
             cliente: `${cliente.first_name} ${cliente.last_name}`,
             empresa: cliente.empresa || '',
             correo:  cliente.email
         });
-      }
     }
   }
 

@@ -1,7 +1,7 @@
 import { Component, computed, inject,signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLinkWithHref } from '@angular/router';
-import { usuariosService } from '../../../core/services/usuarios';
+import { UsuariosService } from '../../../core/services/usuarios';
 import { Usuario } from '../../../interfaces/usuario';
 
 @Component({
@@ -12,7 +12,7 @@ import { Usuario } from '../../../interfaces/usuario';
 })
 export class NuevaCotizacionCliente {
   private router = inject(Router);
-  private usuariosService = inject(usuariosService);
+  private usuariosService = inject(UsuariosService);
 
   clientes = signal<Usuario[]>([]);
   clienteSeleccionado = signal<Usuario | null>(null);

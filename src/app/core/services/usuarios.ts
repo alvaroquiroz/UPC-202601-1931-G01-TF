@@ -6,7 +6,7 @@ import { Usuario } from '../../interfaces/usuario';
 @Injectable({
   providedIn: 'root',
 })
-export class usuariosService {
+export class UsuariosService {
 
   private api = inject(ApiService);
 
