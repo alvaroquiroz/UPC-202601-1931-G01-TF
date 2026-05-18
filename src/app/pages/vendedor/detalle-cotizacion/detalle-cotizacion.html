@@ -154,6 +154,25 @@
                 <strong>S/. {{ total().toFixed(2) }}</strong>
             </div>
         </div>
+        <!-- HISTORIAL -->
+        <div class="card-ui section-card mt-4">
+            <h2 class="section-title mb-3">Historial de Estados</h2>
+            @if(historial().length === 0){
+                <p class="muted">Sin historial disponible.</p>
+            }
+            @for(h of historial(); track h.changed_at){
+                <div class="cart-item">
+                    <div class="d-flex justify-content-between">
+                        <span class="fw-bold">{{ h.estado_anterior }} → {{ h.estado_nuevo }}</span>
+                        <span class="muted" style="font-size:0.8rem;">{{ h.changed_at | slice:0:10 }}</span>
+                    </div>
+                    <div class="muted" style="font-size:0.85rem;">{{ h.cambiado_por }}</div>
+                    @if(h.comment){
+                        <div class="muted" style="font-size:0.85rem; font-style:italic;">{{ h.comment }}</div>
+                    }
+                </div>
+            }
+        </div>
     </div>
 
     </div>
