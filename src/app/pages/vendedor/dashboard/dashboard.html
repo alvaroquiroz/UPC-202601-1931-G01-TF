@@ -12,11 +12,15 @@
             <a routerLink="/vendedor/nueva-cotizacion" class="btn btn-dark btn-sm">
                 <i class="bi bi-plus-lg"></i> Nueva Cotización
             </a>
+            <a routerLink="/vendedor/nueva-cotizacion-cliente" class="btn btn-light-ui btn-sm">
+                <i class="bi bi-person-plus"></i> Cotización por Cliente
+            </a>
+
             <div class="user-chip">
-                <div class="avatar">VE</div>
+                <div class="avatar">{{ usuarioActual?.name ? usuarioActual.name.substring(0, 2).toUpperCase() : 'VE' }}</div>
                 <div>
-                    <div class="name">Vendedor</div>
-                    <div class="email">vendedor&#64;empresa.com</div>
+                    <div class="name">{{ usuarioActual?.name || 'Vendedor' }}</div>
+                    <div class="email">{{ usuarioActual?.email || 'vendedor@empresa.com' }}</div>
                 </div>
             </div>
             <a (click)="logout($event)" class="btn btn-light-ui btn-sm" style="cursor:pointer;">

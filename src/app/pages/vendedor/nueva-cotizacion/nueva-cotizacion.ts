@@ -1,8 +1,10 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLinkWithHref } from '@angular/router';
+import { ActivatedRoute, Router, RouterLinkWithHref } from '@angular/router';
 import { ProductosService } from '../../../core/services/productos';
 import { Producto } from '../../../interfaces/producto';
+import { usuariosService } from '../../../core/services/usuarios';
+import { CotizacionesService } from '../../../core/services/cotizaciones';
 
 @Component({
   selector: 'app-nueva-cotizacion',
@@ -15,6 +17,9 @@ export class NuevaCotizacion {
   private router = inject(Router);
   private fb = inject(FormBuilder);
   private productosService = inject(ProductosService);
+  private route = inject(ActivatedRoute);
+  private cotizacionesService = inject(CotizacionesService);
+  private usuariosService = inject(usuariosService);
 
   cotizacionForm: FormGroup = this.fb.group({
     cliente:       ['', [Validators.required]],
@@ -32,9 +37,22 @@ export class NuevaCotizacion {
   igv   = computed(() => this.subtotal() * 0.18);
   total = computed(() => this.subtotal() + this.igv());
 
-  async ngOnInit(){
+  async ngOnInit() {
     const data = await this.productosService.getProductos();
     this.productos.set(data);
+
+    const clienteId = this.route.snapshot.queryParamMap.get('clienteId');
+    if (clienteId) {
+      const usuarios = await this.usuariosService.getUsuarios();
+      const cliente = usuarios.find((u: any) => u.id === Number(clienteId));
+      if (cliente) {
+        this.cotizacionForm.patchValue({
+            cliente: `${cliente.first_name} ${cliente.last_name}`,
+            empresa: cliente.empresa || '',
+            correo:  cliente.email
+        });
+      }
+    }
   }
 
   agregarProducto(producto: any){
@@ -71,17 +89,45 @@ export class NuevaCotizacion {
     this.carrito.set(this.carrito().filter(p => p.id !== id));
   }
 
-  _submit(){
-    if(this.cotizacionForm.invalid){
+  async _submit() {
+    if (this.cotizacionForm.invalid) {
+      this.cotizacionForm.markAllAsTouched();
       alert('Por favor, complete los datos del cliente.');
       return;
     }
-    if(this.carrito.length === 0){
+    if (this.carrito().length === 0) {
       alert('Agrega al menos un producto a la cotización.');
       return;
     }
-    console.log({ ...this.cotizacionForm.value, productos: this.carrito });
-    alert('Cotización creada correctamente.');
+
+    const clienteId = this.route.snapshot.queryParamMap.get('clienteId');
+    if (!clienteId) {
+      alert('No se pudo identificar al cliente. Vuelve a seleccionarlo.');
+      return;
+    }
+
+    const payload = {
+      clienteId:     Number(clienteId),
+      observaciones: this.cotizacionForm.value.observaciones,
+      subtotal:      this.subtotal(),
+      igv:           this.igv(),
+      total:         this.total(),
+      productos:     this.carrito().map(p => ({
+        id:       p.id,
+        nombre:   p.name,
+        precio:   p.unit_price,
+        cantidad: p.cantidad
+      }))
+    };
+
+    try {
+      await this.cotizacionesService.crearCotizacion(payload);
+      alert('Cotización creada correctamente.');
+      this.router.navigate(['/vendedor/cotizaciones']);
+    } catch (error) {
+      console.error(error);
+      alert('Hubo un error al crear la cotización.');
+    }
   }
 
   logout(event: Event): void {

@@ -1,7 +1,7 @@
 import { Component, computed, inject,signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLinkWithHref } from '@angular/router';
-import { UsuariosService } from '../../../core/services/usuarios';
+import { usuariosService } from '../../../core/services/usuarios';
 import { Usuario } from '../../../interfaces/usuario';
 
 @Component({
@@ -12,7 +12,7 @@ import { Usuario } from '../../../interfaces/usuario';
 })
 export class NuevaCotizacionCliente {
   private router = inject(Router);
-  private usuariosService = inject(UsuariosService);
+  private usuariosService = inject(usuariosService);
 
   clientes = signal<Usuario[]>([]);
   clienteSeleccionado = signal<Usuario | null>(null);
@@ -39,6 +39,14 @@ export class NuevaCotizacionCliente {
 
   limpiar(){
     this.clienteSeleccionado.set(null);
+  }
+
+  crearCotizacion() {
+    const cliente = this.clienteSeleccionado();
+    if (!cliente) return;
+    this.router.navigate(['/vendedor/nueva-cotizacion'], {
+        queryParams: { clienteId: cliente.id }
+    });
   }
 
   logout(event: Event): void {

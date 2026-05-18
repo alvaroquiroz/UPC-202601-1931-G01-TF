@@ -720,3 +720,7 @@ label.form-label { font-weight: 700; }
 .table-ui td:last-child {
   padding-right: 1.5rem;
 }
+
+.table-ui {
+  min-width: 760px;
+}
