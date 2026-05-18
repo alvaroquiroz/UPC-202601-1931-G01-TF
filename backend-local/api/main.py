@@ -63,6 +63,24 @@ async def register(request: Request):
     event = {"httpMethod": "POST", "body": body_bytes.decode("utf-8")}
     return invocar_lambda("UPC-1931-G01-LAMBDA-02-registrarCliente", event)
 
+@app.post("/api/v1/auth/forgot-password")
+async def forgot_password(request: Request):
+    body_bytes = await request.body()
+    event = {
+        "httpMethod": "POST",
+        "body": body_bytes.decode("utf-8")
+    }
+    return invocar_lambda("UPC-1931-G01-LAMBDA-03-forgotPassword", event)
+
+@app.post("/api/v1/auth/reset-password")
+async def reset_password(request: Request):
+    body_bytes = await request.body()
+    event = {
+        "httpMethod": "POST",
+        "body": body_bytes.decode("utf-8")
+    }
+    return invocar_lambda("UPC-1931-G01-LAMBDA-23-resetPassword", event)
+
 @app.get("/api/v1/productos")
 async def listar_productos(request: Request):
     event = {"httpMethod": "GET", "queryStringParameters": dict(request.query_params)}
