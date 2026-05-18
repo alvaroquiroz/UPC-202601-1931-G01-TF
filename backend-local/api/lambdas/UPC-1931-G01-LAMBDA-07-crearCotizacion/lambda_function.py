@@ -31,10 +31,11 @@ def lambda_handler(event, context):
         cursor = conn.cursor()
         
         q_insert_cotizacion = """
-        INSERT INTO quotations (code, client_user_id, status_id, subtotal, igv, total, general_comment)
+        INSERT INTO quotations (code, client_user_id, status_id, subtotal, igv, total, general_comment, sent_at, created_at, updated_at)
         OUTPUT INSERTED.id
-        VALUES (?, ?, 2, ?, ?, ?, ?)
+        VALUES (?, ?, 2, ?, ?, ?, ?, DATEADD(HOUR, -5, GETDATE()), DATEADD(HOUR, -5, GETDATE()), DATEADD(HOUR, -5, GETDATE()))
         """
+        
         cursor.execute(q_insert_cotizacion, (code, cliente_id, subtotal, igv, total, observaciones))
         cotizacion_id = cursor.fetchone()[0]
         
