@@ -48,7 +48,7 @@ class EditarUsuarioBody(BaseModel):
     #return json.loads(respuesta['body'])
 
 def invocar_lambda(nombre_carpeta: str, event: dict):
-    ruta_script = os.path.join(os.path.dirname(_file_), "lambdas", nombre_carpeta, "lambda_function.py")
+    ruta_script = os.path.join(os.path.dirname(__file__), "lambdas", nombre_carpeta, "lambda_function.py")
 
     spec = importlib.util.spec_from_file_location("lambda_module", ruta_script)
     modulo = importlib.util.module_from_spec(spec)
@@ -57,35 +57,21 @@ def invocar_lambda(nombre_carpeta: str, event: dict):
     respuesta = modulo.lambda_handler(event, {})
     return json.loads(respuesta['body'])
 
-@app.post("/api/v1/auth/register")
-async def register(request: Request):
-    body_bytes = await request.body()
-    event = {"httpMethod": "POST", "body": body_bytes.decode("utf-8")}
-    return invocar_lambda("UPC-1931-G01-LAMBDA-02-registrarCliente", event)
+    status_code = respuesta.get("statusCode", 200)
+    body = json.loads(respuesta.get("body", "{}"))
+    headers = respuesta.get("headers", {})
 
-@app.post("/api/v1/auth/register")
-async def register(request: Request):
-    body_bytes = await request.body()
-    event = {"httpMethod": "POST", "body": body_bytes.decode("utf-8")}
-    return invocar_lambda("UPC-1931-G01-LAMBDA-02-registrarCliente", event)
+    return JSONResponse(
+        status_code=status_code,
+        content=body,
+        headers=headers
+    )
 
-@app.post("/api/v1/auth/forgot-password")
-async def forgot_password(request: Request):
+@app.post("/api/v1/auth/login")
+async def login(request: Request):
     body_bytes = await request.body()
-    event = {
-        "httpMethod": "POST",
-        "body": body_bytes.decode("utf-8")
-    }
-    return invocar_lambda("UPC-1931-G01-LAMBDA-03-forgotPassword", event)
-
-@app.post("/api/v1/auth/reset-password")
-async def reset_password(request: Request):
-    body_bytes = await request.body()
-    event = {
-        "httpMethod": "POST",
-        "body": body_bytes.decode("utf-8")
-    }
-    return invocar_lambda("UPC-1931-G01-LAMBDA-23-resetPassword", event)
+    event = {"httpMethod": "POST", "body": body_bytes.decode('utf-8')}
+    return invocar_lambda("UPC-1931-G01-LAMBDA-01-login", event)
 
 @app.get("/api/v1/productos")
 async def listar_productos(request: Request):
