@@ -40,7 +40,7 @@ export const routes: Routes = [
         { path: 'dashboard', component: AdminDashboard },
         { path: 'cotizaciones', component: AdminCotizaciones },
         { path: 'detalle-cotizacion/:id', component: AdminDetalle },
-        { path: 'editar-usuario', component: EditarUsuario },
+        { path: 'editar-usuario/:id', component: EditarUsuario },
         { path: 'reportes', component: Reportes },
         { path: 'usuarios', component: Usuarios },
         { path: 'catalogo', component: Catalogo },

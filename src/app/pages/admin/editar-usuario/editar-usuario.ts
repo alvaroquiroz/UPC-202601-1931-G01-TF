@@ -1,6 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLinkWithHref } from '@angular/router';
+import { ActivatedRoute, Router, RouterLinkWithHref } from '@angular/router';
+import { CotizacionesService } from '../../../core/services/cotizaciones';
+import { email } from '@angular/forms/signals';
 
 @Component({
   selector: 'app-editar-usuario',
@@ -10,26 +12,56 @@ import { Router, RouterLinkWithHref } from '@angular/router';
 })
 export class EditarUsuario {
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private cotService = inject(CotizacionesService);
 
   editarForm: FormGroup;
+  usuarioId = signal<number>(0);
 
   constructor(private fb: FormBuilder){
     this.editarForm = this.fb.group({
-      nombre:   ['Juan Pérez',        [Validators.required]],
-      correo:   ['juan@tech.com',     [Validators.required, Validators.email]],
-      telefono: ['+51 999 111 222',   []],
-      empresa:  ['Tech SAC',          []],
-      rol:      ['Cliente',           [Validators.required]],
-      estado:   ['Activo',            [Validators.required]],
+      first_name:   ['',  [Validators.required]],
+      last_name:    ['',  [Validators.required]],
+      email:        ['',  [Validators.required, Validators.email]],
+      phone:        ['',  []],
+      empresa:      ['',  []],
     });
   }
 
-  _submit(){
-    if(this.editarForm.valid){
-      console.log(this.editarForm.value);
+  async ngOnInit() {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.usuarioId.set(Number(id));
+      try {
+        const data = await this.cotService.getUsuarios();
+        const usuario = data.find((u: any) => u.id === Number(id));
+        if (usuario) {
+          this.editarForm.patchValue({
+            first_name: usuario.first_name,
+            last_name:  usuario.last_name,
+            email:      usuario.email,
+            phone:      usuario.phone,
+            empresa:    usuario.empresa,
+          });
+        }
+      } catch (error) {
+        console.error('Error al cargar usuario:', error);
+      }
+    }
+  }
+
+  async _submit() {
+    if (this.editarForm.invalid) {
+      alert('Por favor complete todos los campos correctamente.');
+      return;
+    }
+    try {
+      await this.cotService.editarUsuario(this.usuarioId(), this.editarForm.value);
       alert('Usuario actualizado correctamente.');
-    } else {
-      alert('Por favor, complete todos los campos correctamente.');
+      this.router.navigate(['/admin/usuarios']);
+    } catch (error) {
+      console.error('Error al actualizar usuario:', error);
+      alert('Hubo un error al actualizar el usuario.');
     }
   }
 
