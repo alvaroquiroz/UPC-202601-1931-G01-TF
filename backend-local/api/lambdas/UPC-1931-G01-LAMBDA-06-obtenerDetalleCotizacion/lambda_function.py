@@ -13,7 +13,6 @@ def get_db_connection():
 def lambda_handler(event, context):
     conn = None
     try:
-        print("\n=== [DEBUG] LAMBDA 06 EJECUTÁNDOSE ===")
         path_params = event.get('pathParameters') or {}
         qs_params = event.get('queryStringParameters') or {}
         

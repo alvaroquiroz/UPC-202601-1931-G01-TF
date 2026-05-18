@@ -32,13 +32,13 @@ def lambda_handler(event, context):
             INNER JOIN users u ON q.client_user_id = u.id
             WHERE (q.vendor_user_id = ? OR q.vendor_user_id IS NULL)
         """
-        params = [vendor_id]
+        params = [int(vendor_id) if vendor_id else None]
 
         if status:
             query += " AND qs.name = ?"
             params.append(status)
 
-        query += " ORDER BY q.created_at DESC"
+        query += " ORDER BY q.id ASC"
 
         cursor.execute(query, params)
 

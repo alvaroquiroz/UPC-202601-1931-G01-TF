@@ -17,6 +17,17 @@ def lambda_handler(event, context):
         cursor = conn.cursor()
         id = event.get('pathParameters', {}).get('id')
 
+        cursor.execute("""
+            SELECT COUNT(*) FROM quotations 
+            WHERE client_user_id = ? OR vendor_user_id = ?
+        """, [id, id])
+        if cursor.fetchone()[0] > 0:
+            return {
+                'statusCode': 400,
+                'headers': {'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({"error": "No se puede eliminar un usuario con cotizaciones asociadas"})
+            }
+
         cursor.execute("DELETE FROM users WHERE id = ?", [id])
         conn.commit()
 

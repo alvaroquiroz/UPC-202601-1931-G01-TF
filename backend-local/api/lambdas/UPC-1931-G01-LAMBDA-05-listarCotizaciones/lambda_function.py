@@ -37,7 +37,7 @@ def lambda_handler(event, context):
             cotizaciones.append({
                 "id": row.id,
                 "code": row.code,
-                "fecha": row.quotation_date.strftime('%Y-%m-%d'),
+                "fecha": row.quotation_date.strftime('%Y-%m-%d') if row.quotation_date else '',
                 "total": f"S/. {float(row.total):.2f}",
                 "estado": row.estado,
                 "productos": row.total_productos

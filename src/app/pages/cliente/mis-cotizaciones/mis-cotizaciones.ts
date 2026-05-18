@@ -17,7 +17,11 @@ export class MisCotizaciones implements OnInit {
 
   async ngOnInit() {
     this.usuarioActual = JSON.parse(localStorage.getItem('access_token') || '{}');
-    const clienteId = this.usuarioActual?.id || 4;
+    const clienteId = this.usuarioActual?.id;
+    if (!clienteId) {
+      this.router.navigate(['/']);
+      return;
+    }
     
     try {
       const data = await this.cotizacionesService.getCotizacionesCliente(clienteId);

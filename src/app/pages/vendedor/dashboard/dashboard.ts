@@ -14,8 +14,10 @@ export class Dashboard implements OnInit{
   private cotService = inject(CotizacionesService);
 
   cotizaciones = signal<Cotizacion[]>([]);
+  usuarioActual: any = {};
 
-  async ngOnInit(){
+  async ngOnInit() {
+    this.usuarioActual = JSON.parse(localStorage.getItem('access_token') || '{}');
     const data = await this.cotService.getCotizaciones();
     this.cotizaciones.set(data);
   }

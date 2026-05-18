@@ -39,33 +39,16 @@ class EditarUsuarioBody(BaseModel):
     phone:      Optional[str] = None
     empresa:    Optional[str] = None
 
-#def invocar_lambda(nombre_carpeta: str, event: dict):
-    #ruta_script = os.path.join(os.path.dirname(__file__), "lambdas", nombre_carpeta, "lambda_function.py")
-    #spec = importlib.util.spec_from_file_location("lambda_module", ruta_script)
-    #modulo = importlib.util.module_from_spec(spec)
-    #spec.loader.exec_module(modulo)
-    #respuesta = modulo.lambda_handler(event, {})
-    #return json.loads(respuesta['body'])
-
 def invocar_lambda(nombre_carpeta: str, event: dict):
+    from fastapi.responses import JSONResponse
     ruta_script = os.path.join(os.path.dirname(__file__), "lambdas", nombre_carpeta, "lambda_function.py")
-
     spec = importlib.util.spec_from_file_location("lambda_module", ruta_script)
     modulo = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(modulo)
-
     respuesta = modulo.lambda_handler(event, {})
-    return json.loads(respuesta['body'])
-
     status_code = respuesta.get("statusCode", 200)
     body = json.loads(respuesta.get("body", "{}"))
-    headers = respuesta.get("headers", {})
-
-    return JSONResponse(
-        status_code=status_code,
-        content=body,
-        headers=headers
-    )
+    return JSONResponse(status_code=status_code, content=body)
 
 @app.post("/api/v1/auth/login")
 async def login(request: Request):
