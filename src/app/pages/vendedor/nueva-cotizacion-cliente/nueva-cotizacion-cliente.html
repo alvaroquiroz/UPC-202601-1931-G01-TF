@@ -33,8 +33,8 @@
         <!-- BUSCADOR -->
         <div class="form-group mb-3">
             <input class="form-control" type="text"
-                [(ngModel)]="busqueda"
-                (ngModelChange)="busqueda.set($event)"
+                [value]="busqueda()"
+                (input)="busqueda.set($any($event.target).value)"
                 placeholder="🔍 Buscar por nombre o empresa...">
         </div>
 

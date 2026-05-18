@@ -27,11 +27,11 @@ def lambda_handler(event, context):
         """
 
         if role_filter:
-            query += " WHERE r.name = ? ORDER BY u.created_at DESC"
+            query += " WHERE r.name = ? ORDER BY u.id ASC"
             cursor.execute(query, [role_filter])
 
         else:
-            query += " ORDER BY u.created_at DESC"
+            query += " ORDER BY u.id ASC"
             cursor.execute(query)
 
         usuarios = []
