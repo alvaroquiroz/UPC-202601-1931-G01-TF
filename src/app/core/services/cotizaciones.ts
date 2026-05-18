@@ -81,4 +81,16 @@ export class CotizacionesService {
   const query = status ? `?status=${status}` : '';
   return this.api.get(`/admin/cotizaciones${query}`);
   }
+
+  async editarUsuario(id: number, body: any) {
+    return this.api.put(`/admin/usuarios/${id}`, body);
+  }
+
+  async bloquearUsuario(id: number) {
+    return this.api.put(`/admin/usuarios/${id}/bloquear`, {});
+  }
+
+  async eliminarUsuario(id: number) {
+    return this.api.delete(`/admin/usuarios/${id}`);
+  }
 }

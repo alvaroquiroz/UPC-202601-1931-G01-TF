@@ -34,12 +34,23 @@ export class Usuarios implements OnInit{
     this.filtro.set(rol);
   }
 
-  bloquear(usuario: any){
-    usuario.status = usuario.status === 'Activo' ? 'Inactivo' : 'Activo';
+  async bloquear(usuario: any) {
+    try {
+      await this.cotService.bloquearUsuario(usuario.id);
+      usuario.status = usuario.status === 'activo' ? 'inactivo' : 'activo';
+    } catch (error) {
+      console.error('Error al bloquear usuario:', error);
+    }
   }
 
-  eliminar(id: number){
-    alert(`Usuario ${id} eliminado.`);
+  async eliminar(id: number) {
+    if (!confirm('¿Estás seguro de eliminar este usuario?')) return;
+    try {
+      await this.cotService.eliminarUsuario(id);
+      this.usuarios.set(this.usuarios().filter((u: any) => u.id !== id));
+    } catch (error) {
+      console.error('Error al eliminar usuario:', error);
+    }
   }
 
   logout(event: Event): void {
