@@ -144,13 +144,21 @@ INSERT INTO roles (name, description) VALUES
 INSERT INTO quotation_statuses (name, description) VALUES
 ('Borrador', 'En borrador'), ('Pendiente', 'Enviada'), ('Aprobada', 'Aprobada'), ('Observada', 'Con cambios'), ('Rechazada', 'Rechazada');
 
+-- INSERT INTO users (role_id, first_name, last_name, email, password, phone, empresa, status) VALUES
+-- (1, 'Admin',  'Sistema', 'admin@cotizaciones.com',  '$2b$10$hashadmin',     NULL,           NULL,          'activo'),
+-- (2, 'Carlos', 'Vega',    'carlos@cotizaciones.com', '$2b$10$hashvendedor1', '+51999111222',  NULL,          'activo'),
+-- (2, 'Ana',    'Rios',    'ana@cotizaciones.com',    '$2b$10$hashvendedor2', '+51999333444',  NULL,          'activo'),
+-- (3, 'Juan',   'Perez',   'juan@tech.com',           '$2b$10$hashcliente1', '+51999555666',  'Tech SAC',    'activo'),
+-- (3, 'Maria',  'Lopez',   'maria@sol.com',           '$2b$10$hashcliente2', '+51999777888',  'Sol SRL',     'activo'),
+-- (3, 'Carlos', 'Ruiz',    'carlos@gn.com',           '$2b$10$hashcliente3', '+51999999000',  'Grupo Norte', 'activo');
+
 INSERT INTO users (role_id, first_name, last_name, email, password, phone, empresa, status) VALUES
-(1, 'Admin',  'Sistema', 'admin@cotizaciones.com',  '$2b$10$hashadmin',     NULL,           NULL,          'activo'),
-(2, 'Carlos', 'Vega',    'carlos@cotizaciones.com', '$2b$10$hashvendedor1', '+51999111222',  NULL,          'activo'),
-(2, 'Ana',    'Rios',    'ana@cotizaciones.com',    '$2b$10$hashvendedor2', '+51999333444',  NULL,          'activo'),
-(3, 'Juan',   'Perez',   'juan@tech.com',           '$2b$10$hashcliente1', '+51999555666',  'Tech SAC',    'activo'),
-(3, 'Maria',  'Lopez',   'maria@sol.com',           '$2b$10$hashcliente2', '+51999777888',  'Sol SRL',     'activo'),
-(3, 'Carlos', 'Ruiz',    'carlos@gn.com',           '$2b$10$hashcliente3', '+51999999000',  'Grupo Norte', 'activo');
+(1, 'Admin',  'Sistema', 'admin@cotizaciones.com',  '$2y$10$5hPJvjxEgzTMoPVEcAPy5.xb2wWF390bw6XNHPtN.m6E1n5N5LVuu', NULL,           NULL,          'activo'),
+(2, 'Carlos', 'Vega',    'carlos@cotizaciones.com', '$2y$10$QkJeV/dtUpfc53i81K4jq.K.gOey17dYYQT4snGUAcHAuqcsptMfu', '+51999111222', NULL,          'activo'),
+(2, 'Ana',    'Rios',    'ana@cotizaciones.com',    '$2y$10$QkJeV/dtUpfc53i81K4jq.K.gOey17dYYQT4snGUAcHAuqcsptMfu', '+51999333444', NULL,          'activo'),
+(3, 'Juan',   'Perez',   'juan@tech.com',           '$2y$10$0BvqEaIEpA72/tC7AtCjGu1iHJjywBTum1QAi2YGkxKlxrCi6PTqC', '+51999555666', 'Tech SAC',    'activo'),
+(3, 'Maria',  'Lopez',   'maria@sol.com',           '$2y$10$0BvqEaIEpA72/tC7AtCjGu1iHJjywBTum1QAi2YGkxKlxrCi6PTqC', '+51999777888', 'Sol SRL',     'activo'),
+(3, 'Carlos', 'Ruiz',    'carlos@gn.com',           '$2y$10$0BvqEaIEpA72/tC7AtCjGu1iHJjywBTum1QAi2YGkxKlxrCi6PTqC', '+51999999000', 'Grupo Norte', 'activo');
 
 INSERT INTO products (code, name, description, unit_price, stock, status) VALUES
 ('PROD-001', 'Laptop Dell XPS 15',  'Laptop profesional 15 pulgadas', 4500.00, 10, 'activo'),

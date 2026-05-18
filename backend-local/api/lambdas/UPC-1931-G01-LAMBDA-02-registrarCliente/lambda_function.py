@@ -1,7 +1,7 @@
 import pyodbc
 import os
 import json
-from security import verify_password
+from security import hash_password
 
 ALLOWED_ORIGINS = [
     origin.strip()
@@ -31,75 +31,90 @@ def lambda_handler(event, context):
     conn = None
     try:
         body = json.loads(event.get("body", "{}"))
+
+        first_name = body.get("first_name", "").strip()
+        last_name = body.get("last_name", "").strip()
         email = body.get("email", "").strip().lower()
+        phone = body.get("phone", "").strip()
+        empresa = body.get("empresa", "").strip()
         password = body.get("password", "").strip()
 
-        if not email or not password:
+        if not first_name or not last_name or not email or not password:
             return {
                 "statusCode": 400,
                 "headers": {
                     "Access-Control-Allow-Origin": DEFAULT_ORIGIN
                 },
                 "body": json.dumps({
-                    "message": "Correo y contraseña son obligatorios"
+                    "message": "Nombre, apellido, correo y contraseña son obligatorios"
                 })
             }
 
         conn = get_db_connection()
         cursor = conn.cursor()
 
+        cursor.execute("SELECT id FROM users WHERE email = ?", (email,))
+        existing_user = cursor.fetchone()
+
+        if existing_user:
+            return {
+                "statusCode": 409,
+                "headers": {
+                    "Access-Control-Allow-Origin": DEFAULT_ORIGIN
+                },
+                "body": json.dumps({
+                    "message": "El correo ya está registrado"
+                })
+            }
+
+        cursor.execute("SELECT id FROM roles WHERE name = 'cliente'")
+        role_row = cursor.fetchone()
+
+        if not role_row:
+            return {
+                "statusCode": 500,
+                "headers": {
+                    "Access-Control-Allow-Origin": DEFAULT_ORIGIN
+                },
+                "body": json.dumps({
+                    "message": "No existe el rol cliente en la base de datos"
+                })
+            }
+
+        role_id = role_row.id
+        password_hash = hash_password(password)
+
         cursor.execute("""
-            SELECT
-                u.id,
-                u.email,
-                u.password,
-                u.first_name,
-                u.last_name,
-                r.name AS role
-            FROM users u
-            INNER JOIN roles r ON r.id = u.role_id
-            WHERE u.email = ? AND u.status = 'activo'
-        """, (email,))
+            INSERT INTO users (
+                role_id,
+                first_name,
+                last_name,
+                email,
+                password,
+                phone,
+                empresa,
+                status
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'activo')
+        """, (
+            role_id,
+            first_name,
+            last_name,
+            email,
+            password_hash,
+            phone if phone else None,
+            empresa if empresa else None
+        ))
 
-        row = cursor.fetchone()
-
-        if not row:
-            return {
-                "statusCode": 401,
-                "headers": {
-                    "Access-Control-Allow-Origin": DEFAULT_ORIGIN
-                },
-                "body": json.dumps({
-                    "message": "Credenciales incorrectas"
-                })
-            }
-
-        if not verify_password(password, row.password):
-            return {
-                "statusCode": 401,
-                "headers": {
-                    "Access-Control-Allow-Origin": DEFAULT_ORIGIN
-                },
-                "body": json.dumps({
-                    "message": "Credenciales incorrectas"
-                })
-            }
-
-        user_data = {
-            "id": row.id,
-            "email": row.email,
-            "name": f"{row.first_name} {row.last_name}",
-            "role": row.role
-        }
+        conn.commit()
 
         return {
-            "statusCode": 200,
+            "statusCode": 201,
             "headers": {
                 "Access-Control-Allow-Origin": DEFAULT_ORIGIN
             },
             "body": json.dumps({
-                "message": "Login correcto",
-                "data": user_data
+                "message": "Cuenta creada correctamente"
             })
         }
 
