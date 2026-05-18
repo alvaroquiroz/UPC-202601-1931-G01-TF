@@ -6,6 +6,17 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
 
+# Lee los orígenes permitidos desde variable de entorno
+# Ejemplo en docker-compose:
+# ALLOWED_ORIGINS=http://localhost:4200,http://127.0.0.1:4200
+ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get("ALLOWED_ORIGINS", "http://localhost:4200").split(",")
+    if origin.strip()
+]
+
+DEFAULT_ORIGIN = ALLOWED_ORIGINS[0] if ALLOWED_ORIGINS else "*"
+
 app = FastAPI(title="API Gateway Simulado - Módulo Cliente")
 
 # Permite llamadas desde Angular (localhost:4200)
@@ -37,7 +48,7 @@ class EditarUsuarioBody(BaseModel):
     #return json.loads(respuesta['body'])
 
 def invocar_lambda(nombre_carpeta: str, event: dict):
-    ruta_script = os.path.join(os.path.dirname(_file_), "lambdas", nombre_carpeta, "lambda_function.py")
+    ruta_script = os.path.join(os.path.dirname(__file__), "lambdas", nombre_carpeta, "lambda_function.py")
 
     spec = importlib.util.spec_from_file_location("lambda_module", ruta_script)
     modulo = importlib.util.module_from_spec(spec)

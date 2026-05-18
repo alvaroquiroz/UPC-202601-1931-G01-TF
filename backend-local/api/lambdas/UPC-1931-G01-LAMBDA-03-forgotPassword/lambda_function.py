@@ -1,15 +1,17 @@
 import pyodbc
 import os
 import json
-from security import verify_password
+import secrets
 
 ALLOWED_ORIGINS = [
     origin.strip()
     for origin in os.environ.get("ALLOWED_ORIGINS", "http://localhost:4200").split(",")
     if origin.strip()
 ]
-
 DEFAULT_ORIGIN = ALLOWED_ORIGINS[0] if ALLOWED_ORIGINS else "*"
+
+APP_ENV = os.environ.get("APP_ENV", "local")
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:4200")
 
 def get_db_connection():
     server = os.environ.get("DB_SERVER")
@@ -32,16 +34,15 @@ def lambda_handler(event, context):
     try:
         body = json.loads(event.get("body", "{}"))
         email = body.get("email", "").strip().lower()
-        password = body.get("password", "").strip()
 
-        if not email or not password:
+        if not email:
             return {
                 "statusCode": 400,
                 "headers": {
                     "Access-Control-Allow-Origin": DEFAULT_ORIGIN
                 },
                 "body": json.dumps({
-                    "message": "Correo y contraseña son obligatorios"
+                    "message": "El correo es obligatorio"
                 })
             }
 
@@ -49,58 +50,44 @@ def lambda_handler(event, context):
         cursor = conn.cursor()
 
         cursor.execute("""
-            SELECT
-                u.id,
-                u.email,
-                u.password,
-                u.first_name,
-                u.last_name,
-                r.name AS role
-            FROM users u
-            INNER JOIN roles r ON r.id = u.role_id
-            WHERE u.email = ? AND u.status = 'activo'
+            SELECT id
+            FROM users
+            WHERE email = ? AND status = 'activo'
         """, (email,))
+        user = cursor.fetchone()
 
-        row = cursor.fetchone()
-
-        if not row:
-            return {
-                "statusCode": 401,
-                "headers": {
-                    "Access-Control-Allow-Origin": DEFAULT_ORIGIN
-                },
-                "body": json.dumps({
-                    "message": "Credenciales incorrectas"
-                })
-            }
-
-        if not verify_password(password, row.password):
-            return {
-                "statusCode": 401,
-                "headers": {
-                    "Access-Control-Allow-Origin": DEFAULT_ORIGIN
-                },
-                "body": json.dumps({
-                    "message": "Credenciales incorrectas"
-                })
-            }
-
-        user_data = {
-            "id": row.id,
-            "email": row.email,
-            "name": f"{row.first_name} {row.last_name}",
-            "role": row.role
+        # Respuesta genérica por seguridad
+        response_body = {
+            "message": "Si el correo existe, te enviamos instrucciones para restablecer tu contraseña"
         }
+
+        if user:
+            token = secrets.token_urlsafe(32)
+
+            cursor.execute("""
+                INSERT INTO password_resets (user_id, token, expires_at, created_at)
+                VALUES (?, ?, DATEADD(MINUTE, 30, GETDATE()), GETDATE())
+            """, (user.id, token))
+
+            conn.commit()
+
+            reset_url = f"{FRONTEND_URL}/restablecer-password/{token}"
+
+            # En local devolvemos el link para pruebas
+            if APP_ENV == "local":
+                response_body["data"] = {
+                    "reset_url": reset_url,
+                    "token": token
+                }
+
+            # En AWS luego aquí enviarías el correo con SES
 
         return {
             "statusCode": 200,
             "headers": {
                 "Access-Control-Allow-Origin": DEFAULT_ORIGIN
             },
-            "body": json.dumps({
-                "message": "Login correcto",
-                "data": user_data
-            })
+            "body": json.dumps(response_body)
         }
 
     except Exception as e:

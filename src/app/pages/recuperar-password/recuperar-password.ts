@@ -1,28 +1,62 @@
-import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLinkWithHref } from '@angular/router';
+import { RouterLink } from '@angular/router';
+import { finalize } from 'rxjs';
+import { Auth } from '../../core/services/auth';
 
 @Component({
   selector: 'app-recuperar-password',
-  imports: [ReactiveFormsModule, RouterLinkWithHref],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './recuperar-password.html',
   styleUrl: './recuperar-password.css',
 })
 export class RecuperarPassword {
-  constructor(
-    private fb: FormBuilder
-  ){}
+  private fb = inject(FormBuilder);
+  private authService = inject(Auth);
+
+  errorMessage = signal('');
+  successMessage = signal('');
+  resetUrl = signal('');
+  isLoading = signal(false);
 
   recuperarForm = this.fb.group({
-    correo: ['',[Validators.required, Validators.email]]
+    correo: ['', [Validators.required, Validators.email]],
   });
 
-  _submit(){
-    if(this.recuperarForm.valid){
-      console.log(this.recuperarForm.value);
-      alert('Se han enviado las instrucciones de recuperación a su correo electrónico.')
-    }else{
-      alert('Por favor, ingresa un correo válido.')
+  enviar(): void {
+    if (this.isLoading()) {
+      return;
     }
+
+    this.errorMessage.set('');
+    this.successMessage.set('');
+    this.resetUrl.set('');
+
+    if (this.recuperarForm.invalid) {
+      this.recuperarForm.markAllAsTouched();
+      return;
+    }
+
+    this.isLoading.set(true);
+
+    this.authService.forgotPassword({
+      email: this.recuperarForm.value.correo?.trim() ?? '',
+    })
+    .pipe(finalize(() => this.isLoading.set(false)))
+    .subscribe({
+      next: (response) => {
+        this.successMessage.set(
+          response?.message ?? 'Solicitud procesada correctamente'
+        );
+
+        this.resetUrl.set(response?.data?.reset_url ?? '');
+      },
+      error: (error) => {
+        this.errorMessage.set(
+          error?.error?.message ?? 'No se pudo procesar la solicitud'
+        );
+      },
+    });
   }
 }

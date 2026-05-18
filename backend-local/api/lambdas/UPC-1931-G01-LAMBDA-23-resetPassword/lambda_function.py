@@ -1,14 +1,14 @@
+
 import pyodbc
 import os
 import json
-from security import verify_password
+from security import hash_password
 
 ALLOWED_ORIGINS = [
     origin.strip()
     for origin in os.environ.get("ALLOWED_ORIGINS", "http://localhost:4200").split(",")
     if origin.strip()
 ]
-
 DEFAULT_ORIGIN = ALLOWED_ORIGINS[0] if ALLOWED_ORIGINS else "*"
 
 def get_db_connection():
@@ -31,17 +31,17 @@ def lambda_handler(event, context):
     conn = None
     try:
         body = json.loads(event.get("body", "{}"))
-        email = body.get("email", "").strip().lower()
+        token = body.get("token", "").strip()
         password = body.get("password", "").strip()
 
-        if not email or not password:
+        if not token or not password:
             return {
                 "statusCode": 400,
                 "headers": {
                     "Access-Control-Allow-Origin": DEFAULT_ORIGIN
                 },
                 "body": json.dumps({
-                    "message": "Correo y contraseña son obligatorios"
+                    "message": "Token y nueva contraseña son obligatorios"
                 })
             }
 
@@ -49,48 +49,41 @@ def lambda_handler(event, context):
         cursor = conn.cursor()
 
         cursor.execute("""
-            SELECT
-                u.id,
-                u.email,
-                u.password,
-                u.first_name,
-                u.last_name,
-                r.name AS role
-            FROM users u
-            INNER JOIN roles r ON r.id = u.role_id
-            WHERE u.email = ? AND u.status = 'activo'
-        """, (email,))
+            SELECT TOP 1 id, user_id
+            FROM password_resets
+            WHERE token = ?
+              AND used_at IS NULL
+              AND expires_at > GETDATE()
+            ORDER BY created_at DESC
+        """, (token,))
+        reset_row = cursor.fetchone()
 
-        row = cursor.fetchone()
-
-        if not row:
+        if not reset_row:
             return {
-                "statusCode": 401,
+                "statusCode": 400,
                 "headers": {
                     "Access-Control-Allow-Origin": DEFAULT_ORIGIN
                 },
                 "body": json.dumps({
-                    "message": "Credenciales incorrectas"
+                    "message": "El enlace es inválido o ha expirado"
                 })
             }
 
-        if not verify_password(password, row.password):
-            return {
-                "statusCode": 401,
-                "headers": {
-                    "Access-Control-Allow-Origin": DEFAULT_ORIGIN
-                },
-                "body": json.dumps({
-                    "message": "Credenciales incorrectas"
-                })
-            }
+        password_hash = hash_password(password)
 
-        user_data = {
-            "id": row.id,
-            "email": row.email,
-            "name": f"{row.first_name} {row.last_name}",
-            "role": row.role
-        }
+        cursor.execute("""
+            UPDATE users
+            SET password = ?, updated_at = GETDATE()
+            WHERE id = ?
+        """, (password_hash, reset_row.user_id))
+
+        cursor.execute("""
+            UPDATE password_resets
+            SET used_at = GETDATE()
+            WHERE id = ?
+        """, (reset_row.id,))
+
+        conn.commit()
 
         return {
             "statusCode": 200,
@@ -98,8 +91,7 @@ def lambda_handler(event, context):
                 "Access-Control-Allow-Origin": DEFAULT_ORIGIN
             },
             "body": json.dumps({
-                "message": "Login correcto",
-                "data": user_data
+                "message": "La contraseña fue actualizada correctamente"
             })
         }
 

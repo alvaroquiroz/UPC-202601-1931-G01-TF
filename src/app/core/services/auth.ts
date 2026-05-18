@@ -12,4 +12,23 @@ export class Auth {
   login(payload: { email: string; password: string }) {
     return this.http.post<any>(`${this.apiUrl}/auth/login`, payload);
   }
+
+  register(payload: {
+    first_name: string;
+    last_name: string;
+    email: string;
+    phone: string;
+    empresa: string;
+    password: string;
+  }) {
+    return this.http.post<any>(`${this.apiUrl}/auth/register`, payload);
+  }
+
+  forgotPassword(payload: { email: string }) {
+    return this.http.post<any>(`${this.apiUrl}/auth/forgot-password`, payload);
+  }
+
+  resetPassword(payload: { token: string; password: string }) {
+    return this.http.post<any>(`${this.apiUrl}/auth/reset-password`, payload);
+  }
 }
