@@ -28,70 +28,48 @@
     <div class="col-lg-7">
       <div class="card-ui section-card">
 
-        <!-- AVATAR -->
-        <div class="text-center mb-4">
-          <div class="avatar avatar-lg mx-auto mb-2">
-            JP
-          </div>
-          <div class="fw-bold">Juan Pérez</div>
-          <div class="muted muted-md">Cliente · Activo</div>
-        </div>
-
         <form [formGroup]="editarForm">
 
-          <div class="form-group">
-            <label class="form-label">Nombre Completo *</label>
-            <input class="form-control" type="text" formControlName="nombre"
-              autocomplete="off">
-            @if(editarForm.get('nombre')?.errors?.["required"] && editarForm.get('nombre')?.touched){
-              <small class="form-text text-danger">El nombre es requerido</small>
-            }
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="form-label">Nombre *</label>
+                <input class="form-control" type="text" formControlName="first_name" autocomplete="off">
+                @if(editarForm.get('first_name')?.errors?.["required"] && editarForm.get('first_name')?.touched){
+                  <small class="form-text text-danger">El nombre es requerido</small>
+                }
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="form-label">Apellido *</label>
+                <input class="form-control" type="text" formControlName="last_name" autocomplete="off">
+                @if(editarForm.get('last_name')?.errors?.["required"] && editarForm.get('last_name')?.touched){
+                  <small class="form-text text-danger">El apellido es requerido</small>
+                }
+              </div>
+            </div>
           </div>
 
           <div class="form-group">
             <label class="form-label">Correo Electrónico *</label>
-            <input class="form-control" type="email" formControlName="correo"
-              autocomplete="off">
-            @if(editarForm.get('correo')?.errors?.["required"] && editarForm.get('correo')?.touched){
+            <input class="form-control" type="email" formControlName="email" autocomplete="off">
+            @if(editarForm.get('email')?.errors?.["required"] && editarForm.get('email')?.touched){
               <small class="form-text text-danger">El correo es requerido</small>
             }
-            @if(editarForm.get('correo')?.errors?.["email"] && editarForm.get('correo')?.touched){
+            @if(editarForm.get('email')?.errors?.["email"] && editarForm.get('email')?.touched){
               <small class="form-text text-danger">Ingresa un correo válido</small>
             }
           </div>
 
           <div class="form-group">
             <label class="form-label">Teléfono</label>
-            <input class="form-control" type="text" formControlName="telefono"
-              autocomplete="off">
+            <input class="form-control" type="text" formControlName="phone" autocomplete="off">
           </div>
 
           <div class="form-group">
             <label class="form-label">Empresa</label>
-            <input class="form-control" type="text" formControlName="empresa"
-              autocomplete="off">
-          </div>
-
-          <div class="row g-3">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label class="form-label">Rol *</label>
-                <select class="form-control form-select" formControlName="rol">
-                  <option value="Admin">Admin</option>
-                  <option value="Vendedor">Vendedor</option>
-                  <option value="Cliente">Cliente</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label class="form-label">Estado *</label>
-                <select class="form-control form-select" formControlName="estado">
-                  <option value="Activo">Activo</option>
-                  <option value="Bloqueado">Bloqueado</option>
-                </select>
-              </div>
-            </div>
+            <input class="form-control" type="text" formControlName="empresa" autocomplete="off">
           </div>
 
           <div class="d-flex gap-3 mt-4">

@@ -99,7 +99,7 @@
               </td>
               <td class="muted">{{ u.created_at | slice:0:10 }}</td>
               <td>
-                <a routerLink="/admin/editar-usuario" class="action-link">
+                <a [routerLink]="['/admin/editar-usuario', u.id]" class="action-link">
                   <i class="bi bi-pencil"></i> Editar
                 </a>
                 <button (click)="bloquear(u)" class="action-link btn btn-link p-0 link-btn-plain">

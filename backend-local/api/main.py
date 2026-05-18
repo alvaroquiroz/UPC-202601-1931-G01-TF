@@ -32,19 +32,46 @@ class VendedorActionBody(BaseModel):
     user_id: int
     comment: Optional[str] = None
 
+class EditarUsuarioBody(BaseModel):
+    first_name: Optional[str] = None
+    last_name:  Optional[str] = None
+    email:      Optional[str] = None
+    phone:      Optional[str] = None
+    empresa:    Optional[str] = None
+
+#def invocar_lambda(nombre_carpeta: str, event: dict):
+    #ruta_script = os.path.join(os.path.dirname(__file__), "lambdas", nombre_carpeta, "lambda_function.py")
+    #spec = importlib.util.spec_from_file_location("lambda_module", ruta_script)
+    #modulo = importlib.util.module_from_spec(spec)
+    #spec.loader.exec_module(modulo)
+    #respuesta = modulo.lambda_handler(event, {})
+    #return json.loads(respuesta['body'])
+
 def invocar_lambda(nombre_carpeta: str, event: dict):
     ruta_script = os.path.join(os.path.dirname(__file__), "lambdas", nombre_carpeta, "lambda_function.py")
+
     spec = importlib.util.spec_from_file_location("lambda_module", ruta_script)
     modulo = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(modulo)
+
     respuesta = modulo.lambda_handler(event, {})
     return json.loads(respuesta['body'])
 
-@app.post("/api/v1/auth/register")
-async def register(request: Request):
+    status_code = respuesta.get("statusCode", 200)
+    body = json.loads(respuesta.get("body", "{}"))
+    headers = respuesta.get("headers", {})
+
+    return JSONResponse(
+        status_code=status_code,
+        content=body,
+        headers=headers
+    )
+
+@app.post("/api/v1/auth/login")
+async def login(request: Request):
     body_bytes = await request.body()
-    event = {"httpMethod": "POST", "body": body_bytes.decode("utf-8")}
-    return invocar_lambda("UPC-1931-G01-LAMBDA-02-registrarCliente", event)
+    event = {"httpMethod": "POST", "body": body_bytes.decode('utf-8')}
+    return invocar_lambda("UPC-1931-G01-LAMBDA-01-login", event)
 
 @app.post("/api/v1/auth/register")
 async def register(request: Request):
@@ -162,3 +189,19 @@ async def reportes_por_vendedor(request: Request):
 async def listar_cotizaciones_admin(request: Request):
     event = {"httpMethod": "GET", "queryStringParameters": dict(request.query_params)}
     return invocar_lambda("UPC-1931-G01-LAMBDA-19-listarCotizacionesAdmin", event)
+
+@app.put("/api/v1/admin/usuarios/{id}")
+async def editar_usuario(id: str, body: EditarUsuarioBody):
+    event = {"httpMethod": "PUT", "pathParameters": {"id": id}, "body": body.model_dump_json()}
+    return invocar_lambda("UPC-1931-G01-LAMBDA-20-editarUsuario", event)
+
+@app.put("/api/v1/admin/usuarios/{id}/bloquear")
+async def bloquear_usuario(id: str):
+    event = {"httpMethod": "PUT", "pathParameters": {"id": id}}
+    return invocar_lambda("UPC-1931-G01-LAMBDA-21-bloquearUsuario", event)
+
+@app.delete("/api/v1/admin/usuarios/{id}")
+async def eliminar_usuario(id: str):
+    event = {"httpMethod": "DELETE", "pathParameters": {"id": id}}
+    return invocar_lambda("UPC-1931-G01-LAMBDA-22-eliminarUsuario", event)
+
