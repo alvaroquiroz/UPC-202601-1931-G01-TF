@@ -6,6 +6,17 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
 
+# Lee los orígenes permitidos desde variable de entorno
+# Ejemplo en docker-compose:
+# ALLOWED_ORIGINS=http://localhost:4200,http://127.0.0.1:4200
+ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get("ALLOWED_ORIGINS", "http://localhost:4200").split(",")
+    if origin.strip()
+]
+
+DEFAULT_ORIGIN = ALLOWED_ORIGINS[0] if ALLOWED_ORIGINS else "*"
+
 app = FastAPI(title="API Gateway Simulado - Módulo Cliente")
 
 # Permite llamadas desde Angular (localhost:4200)
@@ -46,21 +57,35 @@ def invocar_lambda(nombre_carpeta: str, event: dict):
     respuesta = modulo.lambda_handler(event, {})
     return json.loads(respuesta['body'])
 
-    status_code = respuesta.get("statusCode", 200)
-    body = json.loads(respuesta.get("body", "{}"))
-    headers = respuesta.get("headers", {})
-
-    return JSONResponse(
-        status_code=status_code,
-        content=body,
-        headers=headers
-    )
-
-@app.post("/api/v1/auth/login")
-async def login(request: Request):
+@app.post("/api/v1/auth/register")
+async def register(request: Request):
     body_bytes = await request.body()
-    event = {"httpMethod": "POST", "body": body_bytes.decode('utf-8')}
-    return invocar_lambda("UPC-1931-G01-LAMBDA-01-login", event)
+    event = {"httpMethod": "POST", "body": body_bytes.decode("utf-8")}
+    return invocar_lambda("UPC-1931-G01-LAMBDA-02-registrarCliente", event)
+
+@app.post("/api/v1/auth/register")
+async def register(request: Request):
+    body_bytes = await request.body()
+    event = {"httpMethod": "POST", "body": body_bytes.decode("utf-8")}
+    return invocar_lambda("UPC-1931-G01-LAMBDA-02-registrarCliente", event)
+
+@app.post("/api/v1/auth/forgot-password")
+async def forgot_password(request: Request):
+    body_bytes = await request.body()
+    event = {
+        "httpMethod": "POST",
+        "body": body_bytes.decode("utf-8")
+    }
+    return invocar_lambda("UPC-1931-G01-LAMBDA-03-forgotPassword", event)
+
+@app.post("/api/v1/auth/reset-password")
+async def reset_password(request: Request):
+    body_bytes = await request.body()
+    event = {
+        "httpMethod": "POST",
+        "body": body_bytes.decode("utf-8")
+    }
+    return invocar_lambda("UPC-1931-G01-LAMBDA-23-resetPassword", event)
 
 @app.get("/api/v1/productos")
 async def listar_productos(request: Request):
