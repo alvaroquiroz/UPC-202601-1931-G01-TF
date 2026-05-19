@@ -17,6 +17,7 @@ export class Login implements OnInit {
 
   errorMessage = signal('');
   isLoading = signal(false);
+  showPassword = signal(false);
 
   constructor(private fb: FormBuilder) {}
 
@@ -112,5 +113,9 @@ export class Login implements OnInit {
 
     this.errorMessage.set('Rol no reconocido');
     localStorage.removeItem('access_token');
+  }
+
+  togglePassword(): void {
+    this.showPassword.update(value => !value);
   }
 }
