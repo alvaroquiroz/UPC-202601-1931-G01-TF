@@ -28,6 +28,9 @@ def lambda_handler(event, context):
         """, [id])
 
         row = cursor.fetchone()
+        if not row:
+            return {'statusCode': 404, 'body': json.dumps({"error": "Cotización no encontrada"})}
+        
         if row.estado != 'Pendiente':
             return {'statusCode': 400, 'body': json.dumps({"error": "Solo se pueden rechazar cotizaciones en estado Pendiente"})}
 
@@ -37,8 +40,11 @@ def lambda_handler(event, context):
         new_status_id = cursor.fetchone().id
 
         cursor.execute("""
-            UPDATE quotations SET status_id = ?, updated_at = GETDATE() WHERE id = ?
-        """, [new_status_id, id])
+            UPDATE quotations
+            SET status_id = ?, vendor_user_id = ?,
+                updated_at = GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'SA Pacific Standard Time'
+            WHERE id = ?
+        """, [new_status_id, user_id, id])
 
         cursor.execute("""
             INSERT INTO quotation_status_history

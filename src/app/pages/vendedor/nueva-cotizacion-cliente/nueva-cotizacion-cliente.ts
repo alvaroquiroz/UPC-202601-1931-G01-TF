@@ -41,6 +41,14 @@ export class NuevaCotizacionCliente {
     this.clienteSeleccionado.set(null);
   }
 
+  crearCotizacion() {
+    const cliente = this.clienteSeleccionado();
+    if (!cliente) return;
+    this.router.navigate(['/vendedor/nueva-cotizacion'], {
+        queryParams: { clienteId: cliente.id }
+    });
+  }
+
   logout(event: Event): void {
   event.preventDefault();
   localStorage.removeItem('access_token');
