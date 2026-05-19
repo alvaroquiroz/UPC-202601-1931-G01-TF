@@ -10,3 +10,23 @@
 .login-bg .auth-card {
 	backdrop-filter: blur(2px);
 }
+
+.password-group {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  width: 100%;
+}
+
+.password-group .form-control {
+  width: 1% !important;
+  flex: 1 1 auto !important;
+}
+
+.password-toggle {
+  white-space: nowrap;
+}
+
+.password-toggle {
+  border: 1px solid #ced4da;
+  border-left: 0;
+}

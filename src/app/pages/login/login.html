@@ -17,7 +17,7 @@
             formControlName="correo"
             placeholder="usuario@ejemplo.com"
             autocomplete="off"
-          >
+          />
 
           @if (loginForm.get('correo')?.errors?.['required'] && loginForm.get('correo')?.touched) {
             <small class="form-text text-danger">El correo es requerido</small>
@@ -30,15 +30,29 @@
 
         <div class="form-group mb-4">
           <label class="form-label">Contraseña</label>
-          <input
-            class="form-control"
-            type="password"
-            formControlName="password"
-            placeholder="••••••••"
-            autocomplete="off"
-          >
 
-          @if (loginForm.get('password')?.errors?.['required'] && loginForm.get('password')?.touched) {
+          <div class="input-group password-group">
+            <input
+              class="form-control"
+              [type]="showPassword() ? 'text' : 'password'"
+              formControlName="password"
+              placeholder="••••••••"
+              autocomplete="off"
+            />
+
+            <button
+              class="btn password-toggle"
+              type="button"
+              (click)="togglePassword()"
+              [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+            >
+              <i class="bi" [ngClass]="showPassword() ? 'bi-eye-slash' : 'bi-eye'"></i>
+            </button>
+          </div>
+
+          @if (
+            loginForm.get('password')?.errors?.['required'] && loginForm.get('password')?.touched
+          ) {
             <small class="form-text text-danger">La contraseña es requerida</small>
           }
         </div>
@@ -61,7 +75,9 @@
 
       <div class="auth-links mt-4">
         <p>¿No tienes cuenta? <a routerLink="/registro">Regístrate aquí</a></p>
-        <p class="mb-0">¿Olvidaste tu contraseña? <a routerLink="/recuperar-password">Recupérala aquí</a></p>
+        <p class="mb-0">
+          ¿Olvidaste tu contraseña? <a routerLink="/recuperar-password">Recupérala aquí</a>
+        </p>
       </div>
     </div>
   </div>
