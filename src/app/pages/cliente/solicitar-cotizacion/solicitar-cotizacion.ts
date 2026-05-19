@@ -89,7 +89,12 @@ export class SolicitarCotizacion implements OnInit {
     const igv = subtotal * 0.18;
     const total = subtotal + igv;
     const user = JSON.parse(localStorage.getItem('access_token') || '{}');
-    const clienteId = user?.id || 4; 
+    const clienteId = user?.id;
+    if (!clienteId) {
+      alert('No se pudo identificar al cliente. Por favor inicia sesión nuevamente.');
+      this.router.navigate(['/']);
+      return;
+    }
     
     const payload = {
       clienteId: clienteId,

@@ -36,10 +36,11 @@ export class Usuarios implements OnInit{
 
   async bloquear(usuario: any) {
     try {
-      await this.cotService.bloquearUsuario(usuario.id);
-      usuario.status = usuario.status === 'activo' ? 'inactivo' : 'activo';
+        await this.cotService.bloquearUsuario(usuario.id);
+        const data = await this.cotService.getUsuarios();
+        this.usuarios.set(data);
     } catch (error) {
-      console.error('Error al bloquear usuario:', error);
+        console.error('Error al bloquear usuario:', error);
     }
   }
 

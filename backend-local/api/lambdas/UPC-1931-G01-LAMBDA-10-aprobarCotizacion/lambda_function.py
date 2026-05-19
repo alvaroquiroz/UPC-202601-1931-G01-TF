@@ -40,9 +40,11 @@ def lambda_handler(event, context):
 
         cursor.execute("""
             UPDATE quotations
-            SET status_id = ?, reviewed_at = GETDATE(), updated_at = GETDATE()
+            SET status_id = ?, vendor_user_id = ?, 
+                reviewed_at = GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'SA Pacific Standard Time',
+                updated_at = GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'SA Pacific Standard Time'
             WHERE id = ?
-        """, [new_status_id, id])
+        """, [new_status_id, user_id, id])
 
         cursor.execute("""
             INSERT INTO quotation_status_history
