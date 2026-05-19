@@ -18,6 +18,9 @@ export class Registro {
   errorMessage = signal('');
   successMessage = signal('');
   isLoading = signal(false);
+  showPassword = signal(false);
+  showConfirmPassword = signal(false);
+  submitted = signal(false);
 
   constructor(private fb: FormBuilder) {}
 
@@ -25,14 +28,16 @@ export class Registro {
     nombre: ['', [Validators.required]],
     apellido: ['', [Validators.required]],
     correo: ['', [Validators.required, Validators.email]],
-    telefono: ['', [Validators.required]],
+    telefono: [''],
     empresa: [''],
-    password: ['', [Validators.required]],
-    confirmPassword: ['', [Validators.required]],
+    password: ['', [Validators.required, Validators.minLength(6)]],
+    confirmPassword: ['', [Validators.required, Validators.minLength(6)]],
     terminos: [false, [Validators.requiredTrue]],
   });
 
   registro(): void {
+    this.submitted.set(true);
+
     if (this.isLoading()) {
       return;
     }
@@ -60,6 +65,7 @@ export class Registro {
       phone: this.registroForm.value.telefono?.trim() ?? '',
       empresa: this.registroForm.value.empresa?.trim() ?? '',
       password: password.trim(),
+      accepted_terms: this.registroForm.value.terminos ?? false,
     };
 
     this.isLoading.set(true);
@@ -84,6 +90,8 @@ export class Registro {
             terminos: false,
           });
 
+          this.submitted.set(false);
+
           setTimeout(() => {
             this.router.navigate(['/']);
           }, 1500);
@@ -94,5 +102,13 @@ export class Registro {
           );
         },
       });
+  }
+
+  togglePassword(): void {
+    this.showPassword.update(value => !value);
+  }
+
+  toggleConfirmPassword(): void {
+    this.showConfirmPassword.update(value => !value);
   }
 }

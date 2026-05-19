@@ -38,6 +38,7 @@ def lambda_handler(event, context):
         phone = body.get("phone", "").strip()
         empresa = body.get("empresa", "").strip()
         password = body.get("password", "").strip()
+        accepted_terms = body.get("accepted_terms", False)
 
         if not first_name or not last_name or not email or not password:
             return {
@@ -49,6 +50,28 @@ def lambda_handler(event, context):
                     "message": "Nombre, apellido, correo y contraseña son obligatorios"
                 })
             }
+
+        if len(password) < 6:
+          return {
+              "statusCode": 400,
+              "headers": {
+                  "Access-Control-Allow-Origin": DEFAULT_ORIGIN
+              },
+              "body": json.dumps({
+                  "message": "La contraseña debe tener al menos 6 caracteres"
+              })
+          }
+
+        if not accepted_terms:
+          return {
+              "statusCode": 400,
+              "headers": {
+                  "Access-Control-Allow-Origin": DEFAULT_ORIGIN
+              },
+              "body": json.dumps({
+                  "message": "Debes aceptar los términos y condiciones"
+              })
+          }
 
         conn = get_db_connection()
         cursor = conn.cursor()

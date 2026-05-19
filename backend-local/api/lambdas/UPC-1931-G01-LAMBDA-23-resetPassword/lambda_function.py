@@ -45,6 +45,17 @@ def lambda_handler(event, context):
                 })
             }
 
+        if len(password) < 6:
+          return {
+              "statusCode": 400,
+              "headers": {
+                  "Access-Control-Allow-Origin": DEFAULT_ORIGIN
+              },
+              "body": json.dumps({
+                  "message": "La contraseña debe tener al menos 6 caracteres"
+              })
+          }
+
         conn = get_db_connection()
         cursor = conn.cursor()
 
